@@ -1,0 +1,68 @@
+/* Minimal shadcn CSS variables shim
+   This file provides the CSS variables expected by shadcn-generated components
+   so the project can build when node_modules is not available or when the
+   package path cannot be resolved. The variables intentionally map to the
+   project's existing palette where appropriate so the UI appearance is
+   preserved. Do NOT change these values unless fixing a real styling bug. */
+
+:root {
+  /* radii */
+  --radius: 0.5rem;
+  --radius-sm: 0.125rem;
+  --radius-md: 0.375rem;
+  --radius-lg: 0.75rem;
+
+  /* fonts (keep defaults similar to system UI) */
+  --font-sans: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+  --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, "Roboto Mono", "Courier New", monospace;
+
+  /* colors mapped to existing project variables in globals.css */
+  --black: #050505; /* existing */
+  --white: #ffffff; /* existing */
+  --red: #D7192D; /* existing */
+  --line: rgba(5,5,5,.16);
+
+  /* core tokens used by shadcn components */
+  --border: var(--line);
+  --input: #ffffff; /* inputs use white background in this design */
+  --ring: rgba(215,25,45,0.15);
+  --background: var(--white);
+  --foreground: var(--black);
+  --muted: #f6f6f6;
+  --popover: #ffffff;
+  --card: #ffffff;
+
+  /* semantic tokens */
+  --primary: var(--red);
+  --primary-foreground: var(--white);
+  --secondary: #6b6b6b;
+  --secondary-foreground: var(--white);
+  --destructive: #ff2d2d;
+  --destructive-foreground: var(--white);
+  --accent: #f3f4f6;
+  --accent-foreground: #111827;
+  --neutral: #111827;
+  --neutral-foreground: #f8fafc;
+  --success: #16a34a;
+  --success-foreground: var(--white);
+  --warning: #f59e0b;
+  --warning-foreground: #111827;
+  --info: #0ea5e9;
+  --info-foreground: var(--white);
+
+  /* foreground / background pairs used by button variants */
+  --primary-foreground: var(--primary-foreground);
+  --secondary-foreground: var(--secondary-foreground);
+  --destructive-foreground: var(--destructive-foreground);
+
+  /* focus ring color */
+  --ring-offset: 2px;
+}
+
+/* Place core variable definitions into Tailwind base layer so they are available early */
+@layer base {
+  :root {
+    /* keep duplicates in base layer for any PostCSS/tailwind ordering needs */
+    --radius: var(--radius);
+  }
+}
