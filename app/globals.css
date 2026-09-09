@@ -10,6 +10,71 @@
 * { box-sizing: border-box; }
 html { scroll-behavior: smooth; background: var(--white); }
 body { margin: 0; background: var(--white); color: var(--black); font-family: var(--font-body); }
+
+/* Responsive image rules - global fixes to prevent distortion, overflow and layout shift */
+img, picture, svg, video {
+ max-width: 100%; /* never allow images to overflow their containers */
+ height: auto;    /* preserve intrinsic aspect ratio */
+ display: block;  /* remove inline whitespace and better layout control */
+}
+
+/* Target next/image wrappers and common layout image containers used across the site.
+  For <Image fill> the parent container defines the layout; ensure child <img> covers the area.
+*/
+.hero-image-wrap img,
+.hero-image-panel img,
+.destination-image img,
+.service-feature img,
+[data-next-image] img,
+[data-next-image-wrapper] img {
+ width: 100% !important;
+ height: 100% !important;
+ object-fit: cover !important;      /* crop to fill without distortion */
+ object-position: center center !important; /* keep subject centred by default */
+}
+
+/* Specific overrides for images that need different focal points (adjusted on small screens) */
+.hero-image-panel.airport img,
+.hero-image-panel.airport [data-src],
+.hero-image-panel.airport [data-next-image] {
+ object-position: center 25% !important; /* nudge cape town visuals up so Table Mountain remains visible */
+}
+
+/* Ensure service feature backgrounds (e.g., cruise panel) preserve focal point set in inline styles; but apply sensible default */
+.service-feature img {
+ object-position: center 30% !important;
+}
+
+/* Mobile adjustments: adjust object-position to preserve important subjects on narrow viewports */
+@media (max-width: 900px) {
+ .hero-image-panel.airport img { object-position: center 35% !important; }
+ .hero-image-wrap img { object-position: center 30% !important; }
+ .destination-image img { object-position: center 25% !important; }
+}
+
+@media (max-width: 430px) {
+ .hero-image-panel.airport img { object-position: 50% 20% !important; }
+ .hero-image-wrap img { object-position: 50% 20% !important; }
+ .destination-image img { object-position: 50% 15% !important; }
+}
+
+/* Help prevent cumulative layout shift (CLS) for images: ensure image containers reserve space where possible.
+  Use aspect-ratio for card-like and repeated components. These cover common components used site-wide.
+*/
+.destination-image,
+.hero-image-panel,
+.service-feature {
+ position: relative;
+ overflow: hidden;
+}
+
+/* Cards / repeated items: consistent aspect ratio so lists don't jump on load */
+.service-feature { aspect-ratio: 16/9; }
+.destination-image { aspect-ratio: 4/3; }
+
+/* Small utility: avoid accidental horizontal scroll if a child is wider */
+.container, .page, main { overflow-x: hidden; }
+
 a { color: inherit; text-decoration: none; }
 .site-header { position: absolute; z-index: 10; top: 0; left: 0; right: 0; display: flex; align-items: center; gap: 2rem; padding: 25px 5vw; color: var(--white); }
 .logo { display: inline-flex; align-items: center; gap: 8px; letter-spacing: .12em; font-size: 12px; font-weight: 700; white-space: nowrap; }.logo b { background: var(--red); padding: 5px 4px; letter-spacing: .02em; }.logo-light { color: var(--white); }
