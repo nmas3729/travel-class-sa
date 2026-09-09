@@ -1,5 +1,6 @@
 'use client'
 
+import Image from 'next/image'
 import { useState } from 'react'
 import { ArrowUpRight, ChevronRight, Menu, X } from 'lucide-react'
 
@@ -40,6 +41,36 @@ const navItems = [
 ]
 
 export default function VipConciergePage() {
+  const [errorMsg, setErrorMsg] = useState('');
+
+  async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    const form = event.currentTarget as HTMLFormElement;
+    const formData = new FormData(form);
+    const payload: any = {};
+    formData.forEach((value, key) => {
+      payload[key] = value;
+    });
+    // Add additional data
+    payload.type = 'vip';
+    payload.selectedServices = selectedServices;
+    try {
+      const res = await fetch('/api/enquiry', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      });
+      const json = await res.json();
+      if (json.success) {
+        setSubmitted(true);
+      } else {
+        setErrorMsg(json.error || 'Submission failed');
+      }
+    } catch (err) {
+      setErrorMsg('Network error');
+    }
+  }
+
   const [menuOpen, setMenuOpen] = useState(false)
   const [submitted, setSubmitted] = useState(false)
   const [selectedServices, setSelectedServices] = useState<string[]>([])
@@ -196,16 +227,94 @@ export default function VipConciergePage() {
         </div>
       </section>
 
-      {/* Quote / imagery placeholder */}
-      <section style={{ borderBottom: '1px solid rgba(255,255,255,0.07)' }}>
-        <div style={{ minHeight: '380px', display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#111', flexDirection: 'column', gap: '16px', padding: '60px 5vw', textAlign: 'center' }}>
-          <div style={{ border: '1px solid rgba(215,25,45,0.3)', padding: '40px 48px', maxWidth: '600px' }}>
-            <p style={{ fontFamily: 'Georgia, "Times New Roman", serif', fontSize: 'clamp(24px,3vw,38px)', fontWeight: 400, lineHeight: 1.2, color: '#f0ede8', margin: '0 0 18px' }}>
-              &ldquo;Every detail, personally attended to.&rdquo;
-            </p>
-            <p style={{ fontSize: '10px', textTransform: 'uppercase', letterSpacing: '.2em', color: '#D7192D', margin: 0 }}>Travel Class SA VIP Concierge</p>
-          </div>
-          <p aria-hidden="true" style={{ fontSize: '9px', letterSpacing: '.18em', textTransform: 'uppercase', color: 'rgba(255,255,255,0.15)', marginTop: '12px' }}>Luxury imagery to be placed here</p>
+      {/* Primary Luxury Visual & Quote */}
+      <section aria-label="VIP Concierge luxury visual feature" style={{ position: 'relative', overflow: 'hidden', minHeight: 'clamp(500px, 62vh, 760px)', display: 'flex', alignItems: 'center', justifyContent: 'center', borderBottom: '1px solid rgba(255,255,255,0.07)' }}>
+        <Image
+          src="/jet.png"
+          alt="Travel Class SA VIP private jet charter and chauffeured luxury vehicle on the runway with Table Mountain at sunset"
+          fill
+          priority
+          sizes="100vw"
+          style={{ objectFit: 'cover', objectPosition: 'center 62%' }}
+        />
+        <div
+          aria-hidden="true"
+          style={{
+            position: 'absolute',
+            inset: 0,
+            background: 'linear-gradient(180deg, rgba(8,8,8,0.7) 0%, rgba(8,8,8,0.25) 35%, rgba(8,8,8,0.35) 60%, rgba(8,8,8,0.88) 100%)',
+            zIndex: 1,
+          }}
+        />
+        <div
+          aria-hidden="true"
+          style={{
+            position: 'absolute',
+            top: '28px',
+            left: '5vw',
+            right: '5vw',
+            bottom: '28px',
+            border: '1px solid rgba(255,255,255,0.07)',
+            pointerEvents: 'none',
+            zIndex: 2,
+          }}
+        />
+        <div
+          style={{
+            position: 'relative',
+            zIndex: 3,
+            background: 'rgba(8, 8, 8, 0.72)',
+            backdropFilter: 'blur(16px)',
+            border: '1px solid rgba(215,25,45,0.35)',
+            borderTop: '2px solid #D7192D',
+            padding: 'clamp(36px, 5vw, 56px) clamp(28px, 6vw, 64px)',
+            maxWidth: '660px',
+            margin: '0 24px',
+            textAlign: 'center',
+            boxShadow: '0 24px 60px rgba(0,0,0,0.65)',
+          }}
+        >
+          <span style={{ fontSize: '24px', color: '#D7192D', display: 'block', marginBottom: '14px' }}>✦</span>
+          <p style={{ fontFamily: 'Georgia, "Times New Roman", serif', fontSize: 'clamp(26px, 3.2vw, 42px)', fontWeight: 400, lineHeight: 1.2, color: '#f0ede8', margin: '0 0 16px' }}>
+            &ldquo;Every detail, personally attended to.&rdquo;
+          </p>
+          <p style={{ fontSize: '10px', textTransform: 'uppercase', letterSpacing: '.24em', color: '#D7192D', margin: 0, fontWeight: 700 }}>
+            Travel Class SA VIP Concierge
+          </p>
+        </div>
+        <div
+          aria-hidden="true"
+          style={{
+            position: 'absolute',
+            bottom: '20px',
+            left: '5vw',
+            zIndex: 3,
+            fontSize: '9px',
+            letterSpacing: '.18em',
+            textTransform: 'uppercase',
+            color: 'rgba(240,237,232,0.5)',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '8px',
+          }}
+        >
+          <span style={{ width: '5px', height: '5px', borderRadius: '50%', background: '#D7192D' }} />
+          Private Aviation &amp; Chauffeur Services
+        </div>
+        <div
+          aria-hidden="true"
+          style={{
+            position: 'absolute',
+            bottom: '20px',
+            right: '5vw',
+            zIndex: 3,
+            fontSize: '9px',
+            letterSpacing: '.18em',
+            textTransform: 'uppercase',
+            color: 'rgba(240,237,232,0.35)',
+          }}
+        >
+          TC / VIP — 01
         </div>
       </section>
 
@@ -237,7 +346,7 @@ export default function VipConciergePage() {
               <p style={{ fontSize: '14px', color: 'rgba(240,237,232,0.5)', lineHeight: 1.7, margin: 0 }}>Your dedicated concierge will be in touch within 24 hours to begin designing your experience.</p>
             </div>
           ) : (
-            <form onSubmit={e => { e.preventDefault(); setSubmitted(true) }} style={{ background: '#0f0f0f', borderTop: '3px solid #D7192D', padding: 'clamp(32px,4vw,50px)', display: 'flex', flexDirection: 'column' }} aria-label="VIP Concierge enquiry form">
+            <form onSubmit={handleSubmit} style={{ background: '#0f0f0f', borderTop: '3px solid #D7192D', padding: 'clamp(32px,4vw,50px)', display: 'flex', flexDirection: 'column' }} aria-label="VIP Concierge enquiry form">
               {[
                 { id: 'vip-name', label: 'Full name', type: 'text', placeholder: 'Your full name', required: true, autoComplete: 'name' },
                 { id: 'vip-email', label: 'Email address', type: 'email', placeholder: 'you@example.com', required: true, autoComplete: 'email' },

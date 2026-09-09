@@ -20,9 +20,43 @@ export default function TravelClassHome() {
   const [servicesOpen, setServicesOpen] = useState(false)
   const [mobileServicesOpen, setMobileServicesOpen] = useState(false)
   const [step, setStep] = useState(0)
+  const [submitted, setSubmitted] = useState(false)
   const [selected, setSelected] = useState('Holiday')
   const [destination, setDestination] = useState('')
+  const [name, setName] = useState('')
+  const [email, setEmail] = useState('')
+  const [dates, setDates] = useState('')
   const [activeHeroIndex, setActiveHeroIndex] = useState(0)
+  const [errorMsg, setErrorMsg] = useState('')
+
+  const inputStyle: React.CSSProperties = {}
+
+  async function handleSubmit(event: React.MouseEvent | React.FormEvent) {
+    event.preventDefault();
+    const payload = {
+      type: 'main',
+      selected,
+      destination,
+      dates,
+      name,
+      email,
+    };
+    try {
+      const res = await fetch('/api/enquiry', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      });
+      const json = await res.json();
+      if (json.success) {
+        setSubmitted(true);
+      } else {
+        setErrorMsg(json.error || 'Submission failed');
+      }
+    } catch (err) {
+      setErrorMsg('Network error');
+    }
+  }
 
   const serviceDropdownItems = [
     { label: 'Accommodation', href: '#accommodation' },
@@ -151,11 +185,52 @@ export default function TravelClassHome() {
       <div className="hero-meta"><span><b>01</b> Flights</span><span><b>02</b> Accommodation</span><span><b>03</b> Transport</span><span><b>04</b> Group travel</span><span><b>05</b> Destination services</span></div>
     </section>
 
-    <section className="enquiry-section" id="enquiry"><div className="section-label">Start here <span>01—03</span></div><div className="enquiry-grid"><div><p className="eyebrow red">Your journey begins</p><h2>Where are<br /><em>you going?</em></h2><p className="section-intro">Tell us what you&apos;re planning. We&apos;ll help coordinate the journey.</p><div className="journey-progress"><span className="progress-active" /><span /><span /></div></div><div className="enquiry-panel"><p className="panel-kicker">Step {step + 1} of 3</p>{step === 0 && <><h3>What kind of journey are you planning?</h3><div className="choice-list">{enquiryTypes.map(type => <button key={type} className={selected === type ? 'choice selected' : 'choice'} onClick={() => setSelected(type)}>{type}<ChevronRight size={17} /></button>)}</div></>}{step === 1 && <><h3>Where will your journey take you?</h3><label>Destination<input value={destination} onChange={e => setDestination(e.target.value)} placeholder="e.g. Cape Town, Mauritius, Paris" /></label><label>Travel dates<input type="text" placeholder="When would you like to travel?" /></label></>}{step === 2 && <><h3>Let&apos;s make it personal.</h3><label>Your name<input placeholder="Full name" /></label><label>Email or WhatsApp<input placeholder="you@example.com" /></label></>}{step < 2 ? <button className="panel-next" onClick={() => setStep(step + 1)}>Continue <ArrowUpRight size={16} /></button> : <button className="panel-next" onClick={() => setStep(0)}>Send enquiry <ArrowUpRight size={16} /></button>}</div></div></section>
+    <section className="enquiry-section" id="enquiry"><div className="section-label">Start here <span>01—03</span></div><div className="enquiry-grid"><div><p className="eyebrow red">Your journey begins</p><h2>Where are<br /><em>you going?</em></h2><p className="section-intro">Tell us what you&apos;re planning. We&apos;ll help coordinate the journey.</p><div className="journey-progress"><span className="progress-active" /><span /><span /></div></div><div className="enquiry-panel"><p className="panel-kicker">Step {step + 1} of 3</p>{step === 0 && <><h3>What kind of journey are you planning?</h3><div className="choice-list">{enquiryTypes.map(type => <button key={type} className={selected === type ? 'choice selected' : 'choice'} onClick={() => setSelected(type)}>{type}<ChevronRight size={17} /></button>)}</div></>}{step === 1 && <><h3>Where will your journey take you?</h3><label>Destination<input value={destination} onChange={e => setDestination(e.target.value)} placeholder="e.g. Cape Town, Mauritius, Paris" /></label><label>Travel dates<input value={dates} onChange={e => setDates(e.target.value)} type="text" placeholder="When would you like to travel?" /></label></>}{step === 2 && (
+      <>
+        <h3>Let’s make it personal.</h3>
+        <label>
+          Your name
+          <input placeholder="Full name" value={name} onChange={e => setName(e.target.value)} required style={inputStyle} />
+        </label>
+        <label>
+          Email or WhatsApp
+          <input placeholder="you@example.com" value={email} onChange={e => setEmail(e.target.value)} required style={inputStyle} />
+        </label>
+        <button className="panel-next" onClick={handleSubmit}>
+          Send enquiry <ArrowUpRight size={16} />
+        </button>
+      </>
+    )}
+    {step < 2 && (
+      <button className="panel-next" onClick={() => setStep(step + 1)}>
+        Continue <ArrowUpRight size={16} />
+      </button>
+    )}</div></div></section>
 
     <section className="journey-section"><div className="section-label light">The complete picture <span>02—03</span></div><div className="journey-heading"><p className="eyebrow red">More than a booking</p><h2>We manage<br /><em>the journey.</em></h2><p>Every moving part, thoughtfully connected. From the moment you leave home to the moment you return.</p></div><div className="timeline">{[['01', 'Flight', 'The right route, the right fare.'], ['02', 'Airport transfer', 'A smooth arrival, every time.'], ['03', 'Accommodation', 'A place that feels like yours.'], ['04', 'Tours & experiences', 'The moments you came for.'], ['05', 'Local transport', 'Every table, trail and turn connected.'], ['06', 'Return transfer', 'A considered journey back to the airport.'], ['07', 'Flight home', 'Home, with stories to tell.']].map((item, i) => <div className="timeline-item" key={item[1]}><div className="timeline-top"><span>{item[0]}</span><i className={i === 0 ? 'active-dot' : ''} /></div><h3>{item[1]}</h3><p>{item[2]}</p></div>)}</div><div className="journey-relationship"><span>Discover</span><i /> <span>Enquire</span><i /> <span>Consult</span><i /> <span>Quote</span><i /> <span>Confirm</span><i /> <span>Travel</span><i /> <span>Support</span><i /> <span>Return</span></div></section>
 
-    <section className="services-section" id="transport"><div className="section-label">What we do <span>03—03</span></div><div className="services-head"><div><p className="eyebrow red">One partner. Every detail.</p><h2>Everything<br /><em>in motion.</em></h2></div><p>One trusted team to plan, book and manage every part of your travel. No loose ends. No handovers. Just a better way to go.</p></div><div className="services-editorial"><div className="service-feature"><span>01 / 10</span><h3>Flights</h3><p>Domestic, international, multi-city and everything between. We find the route that makes sense for you.</p><a href="#enquiry">Request a flight quote <ArrowUpRight size={15} /></a></div><div className="service-list">{[['Accommodation', 'Plan a stay'], ['Airport Transfers', 'Arrange a transfer'], ['Coach & Bus Hire', 'Hire a coach'], ['Corporate Travel', 'Move your team'], ['Group Travel', 'Plan group travel'], ['Cruising', 'Plan a cruise'], ['Holiday Packages', 'Explore holidays'], ['Tours & Experiences', 'Discover experiences'], ['Visa Desk', 'Get visa guidance']].map((item, i) => <a key={item[0]} href="#enquiry"><span>0{i + 2}</span><span className="service-list-copy">{item[0]}<small>{item[1]}</small></span><ArrowUpRight size={15} /></a>)}</div><div className="service-feature" id="cruising"><span>07 / 10</span><h3>Cruising</h3><p>Cruise holiday packages and related cruise travel options, coordinated around your journey, dates and destination.</p><a href="#enquiry">Plan a cruise <ArrowUpRight size={15} /></a></div><div className="service-feature" id="visa-desk"><span>08 / 10</span><h3>Visa Desk</h3><p>Guidance on visa requirements and supporting documentation for your destination. We help you understand what&apos;s needed and support you in preparing your travel visa documentation. Visa requirements vary by destination and traveller circumstances.</p><a href="#enquiry">Get visa guidance <ArrowUpRight size={15} /></a></div></div></section>
+    <section className="services-section" id="transport"><div className="section-label">What we do <span>03—03</span></div><div className="services-head"><div><p className="eyebrow red">One partner. Every detail.</p><h2>Everything<br /><em>in motion.</em></h2></div><p>One trusted team to plan, book and manage every part of your travel. No loose ends. No handovers. Just a better way to go.</p></div><div className="services-editorial"><div className="service-feature"><span>01 / 10</span><h3>Flights</h3><p>Domestic, international, multi-city and everything between. We find the route that makes sense for you.</p><a href="#enquiry">Request a flight quote <ArrowUpRight size={15} /></a></div><div className="service-list">{[['Accommodation', 'Plan a stay'], ['Airport Transfers', 'Arrange a transfer'], ['Coach & Bus Hire', 'Hire a coach'], ['Corporate Travel', 'Move your team'], ['Group Travel', 'Plan group travel'], ['Cruising', 'Plan a cruise'], ['Holiday Packages', 'Explore holidays'], ['Tours & Experiences', 'Discover experiences'], ['Visa Desk', 'Get visa guidance']].map((item, i) => <a key={item[0]} href="#enquiry"><span>0{i + 2}</span><span className="service-list-copy">{item[0]}<small>{item[1]}</small></span><ArrowUpRight size={15} /></a>)}</div>        <div className="service-feature" id="cruising" style={{ position: 'relative', overflow: 'hidden' }}>
+          <Image
+            src="/cruise.png"
+            alt="Luxury ocean cruise liner docked under evening sky with calm water reflection"
+            fill
+            sizes="(max-width: 800px) 100vw, 50vw"
+            style={{ objectFit: 'cover', objectPosition: 'center 25%' }}
+          />
+          <div
+            aria-hidden="true"
+            style={{
+              position: 'absolute',
+              inset: 0,
+              background: 'linear-gradient(to top, rgba(142, 11, 24, 0.95) 0%, rgba(215, 25, 45, 0.82) 40%, rgba(5, 10, 20, 0.25) 70%, rgba(5, 10, 20, 0.6) 100%)',
+              zIndex: 1,
+            }}
+          />
+          <span style={{ zIndex: 2 }}>07 / 10</span>
+          <h3 style={{ position: 'relative', zIndex: 2 }}>Cruising</h3>
+          <p style={{ position: 'relative', zIndex: 2 }}>Cruise holiday packages and related cruise travel options, coordinated around your journey, dates and destination.</p>
+          <a href="#enquiry" style={{ position: 'relative', zIndex: 2 }}>Plan a cruise <ArrowUpRight size={15} /></a>
+        </div><div className="service-feature" id="visa-desk"><span>08 / 10</span><h3>Visa Desk</h3><p>Guidance on visa requirements and supporting documentation for your destination. We help you understand what&apos;s needed and support you in preparing your travel visa documentation. Visa requirements vary by destination and traveller circumstances.</p><a href="#enquiry">Get visa guidance <ArrowUpRight size={15} /></a></div></div></section>
 
     <section className="destination-section" id="holidays"><div className="destination-image"><Image src="/cape-town.png" alt="Cape Town with Table Mountain in the distance" fill sizes="(max-width: 800px) 100vw, 62vw" /><div className="image-caption">Featured destination / 01</div></div><div className="destination-copy"><p className="eyebrow">Go further</p><h2>Cape Town<br /><em>South Africa</em></h2><p>Where mountain meets ocean, and every day feels like the beginning of something. Let us take you there.</p><a className="text-link" href="#enquiry">Plan this journey <ChevronRight size={16} /></a><div className="destination-list">{destinations.map((d, i) => <span key={d}><b>{String(i + 2).padStart(2, '0')}</b>{d}</span>)}</div></div></section>
 
