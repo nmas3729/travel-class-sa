@@ -12,7 +12,22 @@ function RouteMark({ dark = false }: { dark?: boolean }) {
 }
 
 function Logo({ light = false }: { light?: boolean }) {
-  return <a href="#top" className={`logo ${light ? 'logo-light' : ''}`} aria-label="Travel Class SA home"><span>TRAVEL CLASS</span><b>SA</b></a>
+  return (
+    <a href="#top" className={`logo-image-link ${light ? 'logo-light' : ''}`} aria-label="Travel Class SA home" style={{ display: 'inline-block' }}>
+      <Image 
+        src="/logo.png" 
+        alt="Travel Class SA" 
+        width={167} 
+        height={127} 
+        style={{ 
+          width: 'auto', 
+          height: light ? 'clamp(55px, 7vw, 80px)' : 'clamp(40px, 5vw, 55px)', 
+          objectFit: 'contain',
+          filter: light ? 'drop-shadow(0px 6px 16px rgba(0,0,0,0.3)) opacity(0.95)' : 'drop-shadow(0px 2px 10px rgba(0,0,0,0.15)) opacity(0.92)'
+        }} 
+      />
+    </a>
+  )
 }
 
 export default function TravelClassHome() {
@@ -79,6 +94,13 @@ export default function TravelClassHome() {
     }, 5000)
     return () => clearInterval(timer)
   }, [])
+
+  useEffect(() => {
+    document.body.style.overflow = menuOpen ? 'hidden' : ''
+    return () => {
+      document.body.style.overflow = ''
+    }
+  }, [menuOpen])
 
   return <main id="top">
     <header className="site-header">
@@ -170,19 +192,156 @@ export default function TravelClassHome() {
       </nav>
     )}
 
-    <section className="hero-section reference-hero">
+    <section className="hero-section reference-hero" style={{ gridTemplateColumns: 'var(--hero-cols, 58% 42%)' }}>
+      <style>{`
+        @media (max-width: 900px) {
+          .hero-section.reference-hero { --hero-cols: 1fr; }
+        }
+        .premium-hero-visual {
+          position: relative;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          padding: 0 4vw;
+        }
+        .premium-image-wrapper {
+          display: flex;
+          flex-direction: column;
+          width: 100%;
+          max-width: 480px;
+        }
+        .premium-image-frame {
+          position: relative;
+          width: 100%;
+          height: 520px;
+          max-height: 60vh;
+          min-height: 400px;
+          border-radius: 2px;
+          overflow: hidden;
+          border: 1px solid rgba(255, 255, 255, 0.08);
+          box-shadow: 0 24px 60px rgba(0, 0, 0, 0.5);
+        }
+        @media (max-width: 900px) {
+          .premium-hero-visual {
+            padding: 0 8vw 60px;
+          }
+          .premium-image-frame {
+            height: 300px;
+            min-height: 260px;
+          }
+        }
+        .premium-slide {
+          position: absolute;
+          inset: 0;
+          opacity: 0;
+          visibility: hidden;
+          transition: opacity 1.2s ease, visibility 1.2s, transform 0s 1.2s;
+          transform: scale(1);
+        }
+        .premium-slide-active {
+          opacity: 1;
+          visibility: visible;
+          transform: scale(1.025);
+          transition: opacity 1.2s ease, transform 5.5s ease-out;
+        }
+        @media (prefers-reduced-motion: reduce) {
+          .premium-slide, .premium-slide-active {
+            transform: none !important;
+            transition: opacity 1.2s ease, visibility 1.2s !important;
+          }
+        }
+        .premium-image-overlay {
+          position: absolute;
+          inset: 0;
+          background: linear-gradient(135deg, rgba(8,8,8,0.25) 0%, rgba(8,8,8,0) 40%, rgba(8,8,8,0.1) 100%);
+          z-index: 2;
+          pointer-events: none;
+        }
+        .premium-frame-meta {
+          position: absolute;
+          left: -30px;
+          top: 50%;
+          transform: translateY(-50%) rotate(-90deg);
+          transform-origin: center;
+          font-family: monospace;
+          font-size: 9px;
+          letter-spacing: 0.25em;
+          color: rgba(255,255,255,0.35);
+          white-space: nowrap;
+          z-index: 3;
+        }
+        @media (max-width: 900px) {
+          .premium-frame-meta { display: none; }
+        }
+        .premium-indicators {
+          display: flex;
+          align-items: center;
+          gap: 16px;
+          margin-top: 24px;
+        }
+        .premium-indicator {
+          display: flex;
+          align-items: center;
+          gap: 8px;
+          font-family: monospace;
+          font-size: 10px;
+          color: rgba(255,255,255,0.3);
+          transition: color 0.4s ease;
+        }
+        .premium-indicator.active {
+          color: #D7192D;
+        }
+        .premium-indicator-line {
+          width: 32px;
+          height: 1px;
+          background: rgba(255,255,255,0.15);
+          transition: background 0.4s ease;
+        }
+        .premium-indicator.active .premium-indicator-line {
+          background: #D7192D;
+        }
+      `}</style>
       <div className="hero-copy">
-        <div className="hero-brand-lockup"><span className="hero-suitcase" aria-hidden="true">✦</span><span>TRAVEL <b>CLASS</b></span><small>SA</small></div>
         <p className="hero-sub">We plan. You travel. Stress-free.</p>
         <div className="reference-rule" />
         <p className="eyebrow"><span className="eyebrow-line" /> Travel management company</p>
         <h1><span>Your journey.</span><br /><em>Our expertise.</em></h1>
         <p className="hero-body">From flights and accommodation to transfers, group travel, corporate travel and unforgettable experiences, Travel Class SA brings your journey together through one trusted travel partner.</p>
-        <div className="hero-actions"><a className="button button-red" href="#enquiry">Request a quote <ArrowUpRight size={16} /></a><a className="text-link" href="#contact">Speak to a consultant <ChevronRight size={16} /></a></div>
+        <div className="hero-actions">
+          <a className="button button-red" href="#enquiry">Request a quote <ArrowUpRight size={16} /></a>
+          <a className="text-link" href="#contact">Speak to a consultant <ChevronRight size={16} /></a>
+        </div>
       </div>
-      <div className="hero-visual"><div className="hero-image-wrap">{heroSlides.map((slide, i) => <Image key={slide.src} src={slide.src} alt={slide.alt} fill priority={i === 0} sizes="(max-width: 800px) 100vw, 52vw" className={`hero-slide${i === activeHeroIndex ? ' hero-slide-active' : ''}`} />)}</div><div className="hero-image-panel airport"><Image src="/cape-town.png" alt="Cape Town coastline and Table Mountain" fill sizes="(max-width: 800px) 45vw, 24vw" /></div><div className="hero-location"><span className="location-dot" /> 33°55'31\" S / 18°25'26\" E<br /><b>Cape Town, South Africa</b></div><div className="hero-route"><RouteMark /><svg viewBox="0 0 250 180" preserveAspectRatio="none" aria-hidden="true"><path d="M1 174 C85 174 56 28 139 30 S206 118 249 2" /></svg></div></div>
-      <div className="hero-side-note">TC / 01 <span>CONNECTING PEOPLE TO PLACES THAT INSPIRE</span></div>
-      <div className="hero-meta"><span><b>01</b> Flights</span><span><b>02</b> Accommodation</span><span><b>03</b> Transport</span><span><b>04</b> Group travel</span><span><b>05</b> Destination services</span></div>
+      <div className="premium-hero-visual">
+        <div className="premium-frame-meta" aria-hidden="true">
+          01 / 03 &nbsp; — &nbsp; DESTINATION EXPERIENCE
+        </div>
+        <div className="premium-image-wrapper">
+          <div className="premium-image-frame">
+            <div className="premium-image-overlay" />
+            {heroSlides.map((slide, i) => (
+              <div key={slide.src} className={`premium-slide ${i === activeHeroIndex ? 'premium-slide-active' : ''}`} aria-hidden={i !== activeHeroIndex}>
+                <Image 
+                  src={slide.src} 
+                  alt={slide.alt} 
+                  fill 
+                  priority={i === 0} 
+                  sizes="(max-width: 900px) 90vw, 40vw" 
+                  style={{ objectFit: 'cover' }} 
+                />
+              </div>
+            ))}
+          </div>
+          <div className="premium-indicators" aria-label="Slideshow indicators">
+            {heroSlides.map((_, i) => (
+              <div key={i} className={`premium-indicator ${i === activeHeroIndex ? 'active' : ''}`} aria-hidden="true">
+                0{i + 1}
+                <div className="premium-indicator-line" />
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
     </section>
 
     <section className="enquiry-section" id="enquiry"><div className="section-label">Start here <span>01—03</span></div><div className="enquiry-grid"><div><p className="eyebrow red">Your journey begins</p><h2>Where are<br /><em>you going?</em></h2><p className="section-intro">Tell us what you&apos;re planning. We&apos;ll help coordinate the journey.</p><div className="journey-progress"><span className="progress-active" /><span /><span /></div></div><div className="enquiry-panel"><p className="panel-kicker">Step {step + 1} of 3</p>{step === 0 && <><h3>What kind of journey are you planning?</h3><div className="choice-list">{enquiryTypes.map(type => <button key={type} className={selected === type ? 'choice selected' : 'choice'} onClick={() => setSelected(type)}>{type}<ChevronRight size={17} /></button>)}</div></>}{step === 1 && <><h3>Where will your journey take you?</h3><label>Destination<input value={destination} onChange={e => setDestination(e.target.value)} placeholder="e.g. Cape Town, Mauritius, Paris" /></label><label>Travel dates<input value={dates} onChange={e => setDates(e.target.value)} type="text" placeholder="When would you like to travel?" /></label></>}{step === 2 && (
@@ -246,6 +405,6 @@ export default function TravelClassHome() {
 
     <section className="final-cta" id="contact"><RouteMark dark /><p className="eyebrow">The next step is yours</p><h2>Ready to start<br /><em>your journey?</em></h2><p>Tell us where you want to go. We&apos;ll help coordinate how you get there.</p><div className="hero-actions"><a className="button button-red" href="#enquiry">Request a quote <ArrowUpRight size={16} /></a><a className="text-link" href="#enquiry">Speak to a consultant <ChevronRight size={16} /></a></div></section>
 
-    <footer className="site-footer"><Logo light /><p>Your journey.<br /><em>Our expertise.</em></p><div className="footer-links"><a href="#holidays">Holidays</a><a href="#corporate">Corporate</a><a href="#group-travel">Group travel</a><a href="#contact">Contact</a></div><div className="footer-bottom"><span>© 2026 Travel Class SA</span><span>South Africa</span></div></footer>
+    <footer className="site-footer"><Logo light /><p>Your journey.<br /><em>Our expertise.</em></p><div className="footer-links"><a href="#holidays">Holidays</a><a href="#corporate">Corporate</a><a href="#group-travel">Group travel</a><a href="#contact">Contact</a></div><div className="footer-bottom"><span>© 2026 Travel Class SA</span><span>South Africa</span><p>Designed by <a href="https://sihleb.co.za" target="_blank" rel="noopener noreferrer">SihleB</a></p></div></footer>
   </main>
 }

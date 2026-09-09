@@ -6,8 +6,33 @@ import { ArrowUpRight, ChevronRight, Menu, X } from 'lucide-react'
 
 function Logo({ light = false }: { light?: boolean }) {
   return (
-    <a href="/" className={`logo ${light ? 'logo-light' : ''}`} aria-label="Travel Class SA home">
-      <span>TRAVEL CLASS</span><b>SA</b>
+    <a
+      href="/"
+      className="vip-logo-link"
+      aria-label="Travel Class SA home"
+      style={{
+        display: 'inline-flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        flexShrink: 0,
+        minWidth: 0,
+      }}
+    >
+      <Image
+        src="/logo.png"
+        alt="Travel Class SA"
+        width={140}
+        height={104}
+        priority={false}
+        style={{
+          width: light ? 'clamp(86px, 8vw, 124px)' : 'clamp(82px, 7vw, 112px)',
+          height: 'auto',
+          objectFit: 'contain',
+          display: 'block',
+          opacity: light ? 0.96 : 0.9,
+          filter: light ? 'drop-shadow(0 8px 18px rgba(0,0,0,0.26))' : 'drop-shadow(0 2px 10px rgba(0,0,0,0.12))',
+        }}
+      />
     </a>
   )
 }
@@ -183,8 +208,15 @@ export default function VipConciergePage() {
             <p style={{ margin: '0 0 28px', lineHeight: 1.6, fontSize: '13px', maxWidth: '320px', opacity: .85 }}>Exclusive domestic and international private air travel arranged around the client&apos;s schedule, destination and preferences.</p>
             <a href="#vip-enquiry" style={{ display: 'inline-flex', alignItems: 'center', gap: '10px', textTransform: 'uppercase', letterSpacing: '.12em', fontSize: '10px', fontWeight: 700, color: '#fff' }}>Enquire <ArrowUpRight size={13} /></a>
           </div>
-          <div aria-hidden="true" style={{ minHeight: '200px', background: 'rgba(0,0,0,0.18)', display: 'flex', alignItems: 'center', justifyContent: 'center', border: '1px solid rgba(255,255,255,0.12)' }}>
-            <span style={{ fontSize: '9px', letterSpacing: '.18em', textTransform: 'uppercase', opacity: .4 }}>Image: Private Jet Interior</span>
+          <div aria-hidden="true" style={{ position: 'relative', minHeight: '200px', overflow: 'hidden', background: 'rgba(0,0,0,0.18)', border: '1px solid rgba(255,255,255,0.12)' }}>
+            <Image
+              src="/private-charter.webp"
+              alt="Private jet charter"
+              fill
+              sizes="(max-width: 900px) 100vw, 50vw"
+              style={{ objectFit: 'cover', objectPosition: 'center' }}
+            />
+            <div aria-hidden="true" style={{ position: 'absolute', inset: 0, background: 'linear-gradient(180deg, rgba(0,0,0,0.10), rgba(0,0,0,0.28))' }} />
           </div>
         </div>
 
@@ -405,14 +437,34 @@ export default function VipConciergePage() {
           </nav>
         </div>
         <div style={{ display: 'flex', justifyContent: 'space-between', color: 'rgba(240,237,232,0.3)', fontSize: '10px', flexWrap: 'wrap', gap: '8px' }}>
-          <span>© 2026 Travel Class SA</span><span>South Africa</span>
+          <span>© 2026 Travel Class SA</span><span>South Africa</span><p style={{ margin: 0 }}>Designed by <a href="https://sihleb.co.za" target="_blank" rel="noopener noreferrer" style={{ color: '#f0ede8', textDecoration: 'underline' }}>SihleB</a></p>
         </div>
       </footer>
 
       <style>{`
-        @media (max-width: 900px) { .vip-desktop-nav { display: none !important; } .vip-header-cta { display: none !important; } }
-        @media (min-width: 901px) { .menu-toggle { display: none !important; } }
-        @media (prefers-reduced-motion: reduce) { *, *:before, *:after { transition-duration: 0.01ms !important; animation-duration: 0.01ms !important; } }
+        .vip-logo-link {
+          opacity: 0.96;
+          transition: opacity 0.2s ease;
+        }
+
+        .vip-logo-link:hover,
+        .vip-logo-link:focus-visible {
+          opacity: 1;
+        }
+
+        @media (max-width: 900px) {
+          .vip-desktop-nav { display: none !important; }
+          .vip-header-cta { display: none !important; }
+          .vip-logo-link { margin-right: auto; }
+        }
+
+        @media (min-width: 901px) {
+          .menu-toggle { display: none !important; }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+          *, *:before, *:after { transition-duration: 0.01ms !important; animation-duration: 0.01ms !important; }
+        }
       `}</style>
     </main>
   )
