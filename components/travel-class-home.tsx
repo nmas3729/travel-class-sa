@@ -564,7 +564,28 @@ export default function TravelClassHome() {
 
     <section className="journey-section"><div className="section-label light">The complete picture <span>02—03</span></div><div className="journey-heading"><p className="eyebrow red">More than a booking</p><h2>We manage<br /><em>the journey.</em></h2><p>Every moving part, thoughtfully connected. From the moment you leave home to the moment you return.</p></div><div className="timeline">{[['01', 'Flight', 'The right route, the right fare.'], ['02', 'Airport transfer', 'A smooth arrival, every time.'], ['03', 'Accommodation', 'A place that feels like yours.'], ['04', 'Tours & experiences', 'The moments you came for.'], ['05', 'Local transport', 'Every table, trail and turn connected.'], ['06', 'Return transfer', 'A considered journey back to the airport.'], ['07', 'Flight home', 'Home, with stories to tell.']].map((item, i) => <div className="timeline-item" key={item[1]}><div className="timeline-top"><span>{item[0]}</span><i className={i === 0 ? 'active-dot' : ''} /></div><h3>{item[1]}</h3><p>{item[2]}</p></div>)}</div><div className="journey-relationship"><span>Discover</span><i /> <span>Enquire</span><i /> <span>Consult</span><i /> <span>Quote</span><i /> <span>Confirm</span><i /> <span>Travel</span><i /> <span>Support</span><i /> <span>Return</span></div></section>
 
-    <section className="services-section" id="transport"><div className="section-label">What we do <span>03—03</span></div><div className="services-head"><div><p className="eyebrow red">One partner. Every detail.</p><h2>Everything<br /><em>in motion.</em></h2></div><p>One trusted team to plan, book and manage every part of your travel. No loose ends. No handovers. Just a better way to go.</p></div><div className="services-editorial"><div className="service-feature" id="flights"><span>01 / 10</span><h3>Flights</h3><p>Domestic, international, multi-city and everything between. We find the route that makes sense for you.</p><a href="#enquiry" onClick={() => openEnquiryContext({ journeyType: 'Flights' })}>Request a flight quote <ArrowUpRight size={15} /></a></div><div className="service-list">{[['Accommodation', 'Plan a stay', 'Accommodation'], ['Airport Transfers', 'Arrange a transfer', 'Airport Transfer'], ['Coach & Bus Hire', 'Hire a coach', 'Coach & Bus Hire'], ['Corporate Travel', 'Move your team', 'Corporate Travel'], ['Group Travel', 'Plan group travel', 'Group Travel'], ['Cruising', 'Plan a cruise', 'Cruising'], ['Holiday Packages', 'Explore holidays', 'Holiday'], ['Tours & Experiences', 'Discover experiences', 'Tours & Experiences'], ['Visa Desk', 'Get visa guidance', 'Visa Desk']].map((item, i) => <a key={item[0]} href="#enquiry" onClick={() => openEnquiryContext({ journeyType: item[2] })}><span>0{i + 2}</span><span className="service-list-copy">{item[0]}<small>{item[1]}</small></span><ArrowUpRight size={15} /></a>)}</div>        <div className="service-feature" id="cruising" style={{ position: 'relative', overflow: 'hidden' }}>
+    <section className="services-section" id="transport"><div className="section-label">What we do <span>03—03</span></div><div className="services-head"><div><p className="eyebrow red">One partner. Every detail.</p><h2>Everything<br /><em>in motion.</em></h2></div><p>One trusted team to plan, book and manage every part of your travel. No loose ends. No handovers. Just a better way to go.</p></div><div className="services-editorial"><div className="service-feature" id="flights" style={{ position: 'relative', overflow: 'hidden' }}>
+          <Image
+            src="/fight-card.png"
+            alt="Commercial aircraft on approach with warm sky"
+            fill
+            sizes="(max-width: 800px) 100vw, 50vw"
+            style={{ objectFit: 'cover', objectPosition: 'center 25%' }}
+          />
+          <div
+            aria-hidden="true"
+            style={{
+              position: 'absolute',
+              inset: 0,
+              background: 'linear-gradient(to top, rgba(142, 11, 24, 0.95) 0%, rgba(215, 25, 45, 0.82) 40%, rgba(5, 10, 20, 0.25) 70%, rgba(5, 10, 20, 0.6) 100%)',
+              zIndex: 1,
+            }}
+          />
+          <span style={{ zIndex: 2 }}>01 / 10</span>
+          <h3 style={{ position: 'relative', zIndex: 2 }}>Flights</h3>
+          <p style={{ position: 'relative', zIndex: 2 }}>Domestic, international, multi-city and everything between. We find the route that makes sense for you.</p>
+          <a href="#enquiry" style={{ position: 'relative', zIndex: 2 }} onClick={() => openEnquiryContext({ journeyType: 'Flights' })}>Request a flight quote <ArrowUpRight size={15} /></a>
+        </div><div className="service-list">{[['Accommodation', 'Plan a stay', 'Accommodation'], ['Airport Transfers', 'Arrange a transfer', 'Airport Transfer'], ['Coach & Bus Hire', 'Hire a coach', 'Coach & Bus Hire'], ['Corporate Travel', 'Move your team', 'Corporate Travel'], ['Group Travel', 'Plan group travel', 'Group Travel'], ['Cruising', 'Plan a cruise', 'Cruising'], ['Holiday Packages', 'Explore holidays', 'Holiday'], ['Tours & Experiences', 'Discover experiences', 'Tours & Experiences'], ['Visa Desk', 'Get visa guidance', 'Visa Desk']].map((item, i) => <a key={item[0]} href="#enquiry" onClick={() => openEnquiryContext({ journeyType: item[2] })}><span>0{i + 2}</span><span className="service-list-copy">{item[0]}<small>{item[1]}</small></span><ArrowUpRight size={15} /></a>)}</div>        <div className="service-feature" id="cruising" style={{ position: 'relative', overflow: 'hidden' }}>
           <Image
             src="/cruise.png"
             alt="Luxury ocean cruise liner docked under evening sky with calm water reflection"
