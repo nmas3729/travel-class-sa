@@ -496,7 +496,7 @@ export default function VipConciergePage() {
               </label>
 
               <button type="submit" style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'space-between', gap: '18px', padding: '18px 24px', background: '#D7192D', color: '#fff', border: 0, cursor: 'pointer', textTransform: 'uppercase', letterSpacing: '.12em', fontSize: '10px', fontWeight: 700 }}>
-                Speak to Your Private Travel Concierge <ArrowUpRight size={14} />
+                Send to Your Private Travel Concierge <ArrowUpRight size={14} />
               </button>
             </form>
           )}
