@@ -153,6 +153,7 @@ export default function TravelClassHome() {
   const [dates, setDates] = useState('')
   const [activeHeroIndex, setActiveHeroIndex] = useState(0)
   const [errorMsg, setErrorMsg] = useState('')
+  const [isSubmitting, setIsSubmitting] = useState(false)
   const [isAutoPlaying, setIsAutoPlaying] = useState(true)
   const [reducedMotion, setReducedMotion] = useState(false)
 
@@ -182,6 +183,13 @@ export default function TravelClassHome() {
 
   async function handleSubmit(event: React.MouseEvent | React.FormEvent) {
     event.preventDefault();
+    if (isSubmitting) {
+      return;
+    }
+
+    setIsSubmitting(true);
+    setErrorMsg('');
+
     const payload = {
       type: 'main',
       selected,
@@ -200,10 +208,12 @@ export default function TravelClassHome() {
       if (json.success) {
         setSubmitted(true);
       } else {
-        setErrorMsg(json.error || 'Submission failed');
+        setErrorMsg(json.error || 'We couldn\'t send your enquiry right now. Please try again or contact us directly.');
       }
     } catch (err) {
-      setErrorMsg('Network error');
+      setErrorMsg('We couldn\'t send your enquiry right now. Please try again or contact us directly.');
+    } finally {
+      setIsSubmitting(false);
     }
   }
 
@@ -551,8 +561,8 @@ export default function TravelClassHome() {
           Email or WhatsApp
           <input placeholder="you@example.com" value={email} onChange={e => setEmail(e.target.value)} required style={inputStyle} />
         </label>
-        <button className="panel-next" onClick={handleSubmit}>
-          Send enquiry <ArrowUpRight size={16} />
+        <button className="panel-next" onClick={handleSubmit} disabled={isSubmitting}>
+          {isSubmitting ? 'Sending enquiry…' : 'Send enquiry'} <ArrowUpRight size={16} />
         </button>
       </>
     )}
@@ -643,6 +653,6 @@ export default function TravelClassHome() {
 
     <section className="final-cta" id="contact"><RouteMark dark /><p className="eyebrow">The next step is yours</p><h2>Ready to start<br /><em>your journey?</em></h2><p>Tell us where you want to go. We&apos;ll help coordinate how you get there.</p><div className="hero-actions"><a className="button button-red" href="#enquiry" onClick={() => openEnquiryContext()}>Request a quote <ArrowUpRight size={16} /></a><a className="text-link" href="#enquiry" onClick={() => openEnquiryContext()}>Speak to a consultant <ChevronRight size={16} /></a></div></section>
 
-    <footer className="site-footer"><Logo light /><p>Your journey.<br /><em>Our expertise.</em></p><div className="footer-links"><a href="#holidays">Holidays</a><a href="#corporate">Corporate</a><a href="#group-travel">Group travel</a><a href="#contact">Contact</a></div><div className="footer-contact" aria-label="Travel Class SA contact information"><a className="footer-email-link" href="mailto:info@travelclasssa.com" aria-label="Email Travel Class SA">info@travelclasssa.com</a><button type="button" className="footer-whatsapp-button" aria-label="WhatsApp — coming soon" aria-disabled="true" disabled title="WhatsApp — coming soon"><WhatsAppGlyph /></button><div className="footer-socials" aria-label="Travel Class SA social media placeholders">{socialPlaceholders.map(({ label, Icon }) => (<span key={label} className="footer-social-item" aria-label={`${label} — coming soon`} title={`${label} — coming soon`} role="img"><Icon /></span>))}</div></div><div className="footer-bottom"><span>© 2026 Travel Class SA</span><span>South Africa</span><p>Designed by <a href="https://sihleb.co.za" target="_blank" rel="noopener noreferrer">SihleB</a></p></div></footer>
+    <footer className="site-footer"><Logo light /><p>Your journey.<br /><em>Our expertise.</em></p><div className="footer-links"><a href="#holidays">Holidays</a><a href="#corporate">Corporate</a><a href="#group-travel">Group travel</a><a href="#contact">Contact</a></div><div className="footer-contact" aria-label="Travel Class SA contact information"><span>Contact</span><span>Phone</span><a className="footer-phone-link" href="tel:+27728336872" aria-label="Call Travel Class SA on 072 833 6872">072 833 6872</a><span>WhatsApp</span><a className="footer-whatsapp-link" href="https://wa.me/27633690057" target="_blank" rel="noopener noreferrer" aria-label="Chat with Travel Class SA on WhatsApp"><WhatsAppGlyph />063 369 0057</a><span>Email</span><a className="footer-email-link" href="mailto:info@travelclasssa.com" aria-label="Email Travel Class SA">info@travelclasssa.com</a><div className="footer-socials" aria-label="Travel Class SA social media placeholders">{socialPlaceholders.map(({ label, Icon }) => (<span key={label} className="footer-social-item" aria-label={`${label} — coming soon`} title={`${label} — coming soon`} role="img"><Icon /></span>))}</div></div><div className="footer-bottom"><span>© 2026 Travel Class SA</span><span>South Africa</span><p>Designed by <a href="https://sihleb.co.za" target="_blank" rel="noopener noreferrer">SihleB</a></p></div></footer>
   </main>
 }

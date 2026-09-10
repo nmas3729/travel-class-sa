@@ -149,18 +149,26 @@ const navItems = [
 
 export default function VipConciergePage() {
   const [errorMsg, setErrorMsg] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
+    if (isSubmitting) {
+      return;
+    }
+
+    setErrorMsg('');
+    setIsSubmitting(true);
+
     const form = event.currentTarget as HTMLFormElement;
     const formData = new FormData(form);
     const payload: any = {};
     formData.forEach((value, key) => {
       payload[key] = value;
     });
-    // Add additional data
     payload.type = 'vip';
     payload.selectedServices = selectedServices;
+
     try {
       const res = await fetch('/api/enquiry', {
         method: 'POST',
@@ -168,13 +176,17 @@ export default function VipConciergePage() {
         body: JSON.stringify(payload),
       });
       const json = await res.json();
+
       if (json.success) {
         setSubmitted(true);
+        setErrorMsg('');
       } else {
-        setErrorMsg(json.error || 'Submission failed');
+        setErrorMsg(json.error || "We couldn't send your enquiry right now. Please try again or contact us directly.");
       }
     } catch (err) {
-      setErrorMsg('Network error');
+      setErrorMsg("We couldn't send your enquiry right now. Please try again or contact us directly.");
+    } finally {
+      setIsSubmitting(false);
     }
   }
 
@@ -457,7 +469,7 @@ export default function VipConciergePage() {
             <div style={{ background: '#0f0f0f', border: '1px solid rgba(215,25,45,0.3)', padding: 'clamp(32px,4vw,50px)', display: 'flex', flexDirection: 'column', justifyContent: 'center', minHeight: '400px', textAlign: 'center', gap: '16px' }}>
               <span style={{ fontSize: '28px', color: '#D7192D' }}>✦</span>
               <h3 style={{ fontFamily: 'Georgia, "Times New Roman", serif', fontWeight: 400, fontSize: '28px', color: '#f0ede8', margin: 0 }}>Your enquiry has been received.</h3>
-              <p style={{ fontSize: '14px', color: 'rgba(240,237,232,0.5)', lineHeight: 1.7, margin: 0 }}>Your dedicated concierge will be in touch within 24 hours to begin designing your experience.</p>
+              <p style={{ fontSize: '14px', color: 'rgba(240,237,232,0.5)', lineHeight: 1.7, margin: 0 }}>Enquiry received. Your private travel concierge will be in touch.</p>
             </div>
           ) : (
             <form onSubmit={handleSubmit} style={{ background: '#0f0f0f', borderTop: '3px solid #D7192D', padding: 'clamp(32px,4vw,50px)', display: 'flex', flexDirection: 'column' }} aria-label="VIP Concierge enquiry form">
@@ -495,8 +507,16 @@ export default function VipConciergePage() {
                 <textarea id="vip-notes" rows={4} placeholder="Any specific requirements, preferences or questions..." style={{ border: '1px solid rgba(255,255,255,0.12)', borderRadius: 0, background: 'transparent', color: '#f0ede8', padding: '10px 12px', outline: 0, resize: 'vertical', fontFamily: 'Arial, Helvetica, sans-serif', fontSize: '14px' }} />
               </label>
 
-              <button type="submit" style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'space-between', gap: '18px', padding: '18px 24px', background: '#D7192D', color: '#fff', border: 0, cursor: 'pointer', textTransform: 'uppercase', letterSpacing: '.12em', fontSize: '10px', fontWeight: 700 }}>
-                Send to Your Private Travel Concierge <ArrowUpRight size={14} />
+              {isSubmitting && (
+                <p style={{ margin: '0 0 16px', fontSize: '12px', letterSpacing: '.08em', textTransform: 'uppercase', color: '#f0ede8' }}>Sending enquiry…</p>
+              )}
+
+              {errorMsg && (
+                <p style={{ margin: '0 0 16px', fontSize: '13px', lineHeight: 1.6, color: '#f7c7c7' }}>{errorMsg}</p>
+              )}
+
+              <button type="submit" disabled={isSubmitting} style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'space-between', gap: '18px', padding: '18px 24px', background: isSubmitting ? '#8a1a22' : '#D7192D', color: '#fff', border: 0, cursor: isSubmitting ? 'not-allowed' : 'pointer', textTransform: 'uppercase', letterSpacing: '.12em', fontSize: '10px', fontWeight: 700, opacity: isSubmitting ? 0.8 : 1 }}>
+                {isSubmitting ? 'Sending enquiry…' : 'Send to Your Private Travel Concierge'} <ArrowUpRight size={14} />
               </button>
             </form>
           )}
@@ -521,11 +541,16 @@ export default function VipConciergePage() {
         <div style={{ display: 'flex', justifyContent: 'space-between', color: 'rgba(240,237,232,0.3)', fontSize: '10px', flexWrap: 'wrap', gap: '12px', alignItems: 'center' }}>
           <span>© 2026 Travel Class SA</span><span>South Africa</span>
           <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flexWrap: 'wrap' }}>
-            <a href="mailto:info@travelclasssa.com" aria-label="Email Travel Class SA" style={{ color: '#f0ede8', textDecoration: 'underline', textTransform: 'lowercase' }}>info@travelclasssa.com</a>
-            <button type="button" aria-label="WhatsApp — coming soon" aria-disabled="true" disabled style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', padding: '7px 10px', background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.12)', color: 'rgba(240,237,232,0.8)', textTransform: 'uppercase', letterSpacing: '.12em', fontSize: '9px', cursor: 'not-allowed', opacity: 0.75 }}>
+            <span style={{ color: '#f0ede8', textTransform: 'uppercase', letterSpacing: '.12em', fontSize: '10px' }}>Contact</span>
+            <span style={{ color: 'rgba(240,237,232,0.6)', textTransform: 'uppercase', letterSpacing: '.12em', fontSize: '10px' }}>Phone</span>
+            <a href="tel:+27728336872" aria-label="Call Travel Class SA on 072 833 6872" style={{ color: '#f0ede8', textDecoration: 'underline' }}>072 833 6872</a>
+            <span style={{ color: 'rgba(240,237,232,0.6)', textTransform: 'uppercase', letterSpacing: '.12em', fontSize: '10px' }}>WhatsApp</span>
+            <a href="https://wa.me/27633690057" target="_blank" rel="noopener noreferrer" aria-label="Chat with Travel Class SA on WhatsApp" style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', color: '#f0ede8', textDecoration: 'underline' }}>
               <WhatsAppGlyph />
-              WhatsApp
-            </button>
+              063 369 0057
+            </a>
+            <span style={{ color: 'rgba(240,237,232,0.6)', textTransform: 'uppercase', letterSpacing: '.12em', fontSize: '10px' }}>Email</span>
+            <a href="mailto:info@travelclasssa.com" aria-label="Email Travel Class SA" style={{ color: '#f0ede8', textDecoration: 'underline', textTransform: 'lowercase' }}>info@travelclasssa.com</a>
             <div aria-label="Travel Class SA social media placeholders" style={{ display: 'inline-flex', gap: '8px', alignItems: 'center' }}>
               {socialPlaceholders.map(({ label, Icon }) => (
                 <span key={label} aria-label={`${label} — coming soon`} title={`${label} — coming soon`} role="img" style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', width: '28px', height: '28px', borderRadius: '50%', border: '1px solid rgba(255,255,255,0.12)', color: 'rgba(240,237,232,0.7)', background: 'rgba(255,255,255,0.02)' }}>
