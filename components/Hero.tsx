@@ -35,7 +35,7 @@ export default function Hero() {
                   href="/contact"
                   className="inline-flex items-center justify-center px-6 py-3 border border-white/20 rounded-full text-white text-sm font-medium hover:bg-white/5 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-tc-red"
                 >
-                  SPEAK TO A CONSULTANT
+                  CHAT TO A CONSULTANT
                 </Link>
               </div>
 

@@ -294,7 +294,7 @@ export default function TravelClassHome() {
 
     <header className="site-header">
       <Logo />
-      <a className="header-phone" href="tel:0728336872" aria-label="Call Travel Class SA on 072 833 6872">072 833 6872</a>
+      <a className="header-phone" href="tel:+27728336872" aria-label="Call Travel Class SA on +27 72 833 6872">+27 72 833 6872</a>
       <nav className="desktop-nav" aria-label="Primary navigation">
         <a href="#holidays">Holidays</a>
         <a href="#flights">Flights</a>
@@ -533,7 +533,7 @@ export default function TravelClassHome() {
         <p className="hero-body">From flights and accommodation to transfers, group travel, corporate travel and unforgettable experiences, Travel Class SA brings your journey together through one trusted travel partner.</p>
         <div className="hero-actions">
           <button className="button button-red" type="button" onClick={() => openQuoteModal()}>Request a quote <ArrowUpRight size={16} /></button>
-          <a className="text-link" href={buildWhatsAppUrl()} aria-label="Chat with Travel Class SA on WhatsApp">Speak to a consultant <ChevronRight size={16} /></a>
+          <a className="text-link" href={buildWhatsAppUrl()} aria-label="Chat with Travel Class SA on WhatsApp">Chat to a consultant <ChevronRight size={16} /></a>
         </div>
       </div>
       <div className="premium-hero-visual">
@@ -738,7 +738,7 @@ export default function TravelClassHome() {
 
     <section className="about-section" id="about"><div><p className="eyebrow red">About Travel Class SA</p><h2>Travel made<br /><em>more personal.</em></h2></div><div className="about-copy"><p>Travel Class SA is a South African full-service Travel Management Company coordinating complete journeys for individuals, families, couples, leisure travellers, groups and organisations.</p><p>Our aim is to make travel simple, affordable, convenient, professional, personalised and memorable.</p><div className="about-principles"><span>Simple</span><span>Convenient</span><span>Personalised</span><span>Memorable</span></div></div></section>
 
-    <section className="final-cta" id="contact"><RouteMark dark /><p className="eyebrow">The next step is yours</p><h2>Ready to start<br /><em>your journey?</em></h2><p>Tell us where you want to go. We&apos;ll help coordinate how you get there.</p><div className="hero-actions"><button className="button button-red" type="button" onClick={() => openQuoteModal()}>Request a quote <ArrowUpRight size={16} /></button><a className="text-link" href={buildWhatsAppUrl()} aria-label="Chat with Travel Class SA on WhatsApp">Speak to a consultant <ChevronRight size={16} /></a></div></section>
+    <section className="final-cta" id="contact"><RouteMark dark /><p className="eyebrow">The next step is yours</p><h2>Ready to start<br /><em>your journey?</em></h2><p>Tell us where you want to go. We&apos;ll help coordinate how you get there.</p><div className="hero-actions"><button className="button button-red" type="button" onClick={() => openQuoteModal()}>Request a quote <ArrowUpRight size={16} /></button><a className="text-link" href={buildWhatsAppUrl()} aria-label="Chat with Travel Class SA on WhatsApp">Chat to a consultant <ChevronRight size={16} /></a></div></section>
 
     <footer className="site-footer"><Logo light /><p>Your journey.<br /><em>Our expertise.</em></p><div className="footer-links"><a href="#holidays">Holidays</a><a href="#corporate">Corporate</a><a href="#group-travel">Group travel</a><a href="#contact">Contact</a></div><div className="footer-contact" aria-label="Travel Class SA contact information"><span>Contact</span><a className="footer-whatsapp-link" href={buildWhatsAppUrl()} target="_blank" rel="noopener noreferrer" aria-label="Chat with Travel Class SA on WhatsApp" title="Chat on WhatsApp"><WhatsAppGlyph /></a><span>Email</span><a className="footer-email-link" href="mailto:info@travelclasssa.com" aria-label="Email Travel Class SA">info@travelclasssa.com</a><div className="footer-socials" aria-label="Travel Class SA social media placeholders">{socialPlaceholders.map(({ label, Icon }) => (<span key={label} className="footer-social-item" aria-label={`${label} — coming soon`} title={`${label} — coming soon`} role="img"><Icon /></span>))}</div></div><div className="footer-bottom"><span>© 2026 Travel Class SA</span><span>South Africa</span><p>Designed by <a href="https://sihleb.co.za" target="_blank" rel="noopener noreferrer">SihleB</a></p></div></footer>
   </main>

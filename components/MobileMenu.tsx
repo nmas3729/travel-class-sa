@@ -107,7 +107,7 @@ export default function MobileMenu() {
                   onClick={() => setOpen(false)}
                   className="inline-flex items-center justify-center w-full px-4 py-3 border border-solid border-tc-grey-light rounded-md text-tc-grey-dark font-medium hover:bg-tc-grey-light focus:outline-none focus:ring-2 focus:ring-tc-red"
                 >
-                  SPEAK TO A CONSULTANT
+                  CHAT TO A CONSULTANT
                 </a>
               </div>
             </div>
