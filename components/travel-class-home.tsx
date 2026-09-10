@@ -606,7 +606,28 @@ export default function TravelClassHome() {
           <h3 style={{ position: 'relative', zIndex: 2 }}>Cruising</h3>
           <p style={{ position: 'relative', zIndex: 2 }}>Cruise holiday packages and related cruise travel options, coordinated around your journey, dates and destination.</p>
           <a href="#enquiry" style={{ position: 'relative', zIndex: 2 }} onClick={() => openEnquiryContext({ journeyType: 'Cruising' })}>Plan a cruise <ArrowUpRight size={15} /></a>
-        </div><div className="service-feature" id="visa-desk"><span>08 / 10</span><h3>Visa Desk</h3><p>Guidance on visa requirements and supporting documentation for your destination. We help you understand what&apos;s needed and support you in preparing your travel visa documentation. Visa requirements vary by destination and traveller circumstances.</p><a href="#enquiry" onClick={() => openEnquiryContext({ journeyType: 'Visa Desk' })}>Get visa guidance <ArrowUpRight size={15} /></a></div></div></section>
+        </div><div className="service-feature" id="visa-desk" style={{ position: 'relative', overflow: 'hidden' }}>
+          <Image
+            src="/visa-card.png"
+            alt="Visa desk staff assisting customers in a bright office"
+            fill
+            sizes="(max-width: 800px) 100vw, 50vw"
+            style={{ objectFit: 'cover', objectPosition: 'center 25%' }}
+          />
+          <div
+            aria-hidden="true"
+            style={{
+              position: 'absolute',
+              inset: 0,
+              background: 'linear-gradient(to top, rgba(142, 11, 24, 0.95) 0%, rgba(215, 25, 45, 0.82) 40%, rgba(5, 10, 20, 0.25) 70%, rgba(5, 10, 20, 0.6) 100%)',
+              zIndex: 1,
+            }}
+          />
+          <span style={{ zIndex: 2 }}>08 / 10</span>
+          <h3 style={{ position: 'relative', zIndex: 2 }}>Visa Desk</h3>
+          <p style={{ position: 'relative', zIndex: 2 }}>Guidance on visa requirements and supporting documentation for your destination. We help you understand what&apos;s needed and support you in preparing your travel visa documentation. Visa requirements vary by destination and traveller circumstances.</p>
+          <a href="#enquiry" style={{ position: 'relative', zIndex: 2 }} onClick={() => openEnquiryContext({ journeyType: 'Visa Desk' })}>Get visa guidance <ArrowUpRight size={15} /></a>
+        </div></div></section>
 
     <section className="destination-section" id="holidays"><div className="destination-image"><Image src={destinationOptions[0].image} alt={destinationOptions[0].alt} fill sizes="(max-width: 800px) 100vw, 62vw" /><div className="image-caption">Featured destination / 01</div></div><div className="destination-copy"><p className="eyebrow">Go further</p><h2>{destinationOptions[0].name}<br /><em>{destinationOptions[0].country}</em></h2><p>Where mountain meets ocean, and every day feels like the beginning of something. Let us take you there.</p><a className="text-link" href="#enquiry" onClick={() => openDestinationContext(destinationOptions[0].name)}>Plan this journey <ChevronRight size={16} /></a><div className="destination-list">{destinationOptions.slice(1).map((destination, i) => <button key={destination.name} type="button" onClick={() => openDestinationContext(destination.name)} style={{ appearance: 'none', border: 0, background: 'transparent', padding: 0, width: '100%', textAlign: 'left', font: 'inherit', color: 'inherit', cursor: 'pointer' }}><span><b>{String(i + 2).padStart(2, '0')}</b>{destination.name}</span></button>)}</div></div></section>
 
