@@ -174,12 +174,18 @@ export default function VipConciergePage() {
     }
     setIsSubmitting(true);
 
-    const payload: any = {};
-    formData.forEach((value, key) => {
-      payload[key] = value;
-    });
-    payload.type = 'vip';
-    payload.selectedServices = selectedServices;
+    const payload = {
+      type: 'vip',
+      name: formData.get('name')?.toString().trim() || '',
+      email: formData.get('email')?.toString().trim() || '',
+      phone: formData.get('phone')?.toString().trim() || '',
+      destination: formData.get('destination')?.toString().trim() || '',
+      dates: formData.get('dates')?.toString().trim() || '',
+      travellers: formData.get('travellers')?.toString().trim() || '',
+      notes: formData.get('notes')?.toString().trim() || '',
+      website: formData.get('website')?.toString().trim() || '',
+      selectedServices,
+    };
 
     try {
       const res = await fetch('/api/enquiry', {
@@ -520,7 +526,7 @@ export default function VipConciergePage() {
 
               <label htmlFor="vip-notes" style={{ display: 'grid', gap: '8px', fontSize: '10px', textTransform: 'uppercase', letterSpacing: '.1em', margin: '0 0 28px', color: 'rgba(240,237,232,0.6)' }}>
                 Additional requirements / notes
-                <textarea id="vip-notes" rows={4} placeholder="Any specific requirements, preferences or questions..." style={{ border: '1px solid rgba(255,255,255,0.12)', borderRadius: 0, background: 'transparent', color: '#f0ede8', padding: '10px 12px', outline: 0, resize: 'vertical', fontFamily: 'Arial, Helvetica, sans-serif', fontSize: '14px' }} />
+                <textarea id="vip-notes" name="notes" rows={4} placeholder="Any specific requirements, preferences or questions..." style={{ border: '1px solid rgba(255,255,255,0.12)', borderRadius: 0, background: 'transparent', color: '#f0ede8', padding: '10px 12px', outline: 0, resize: 'vertical', fontFamily: 'Arial, Helvetica, sans-serif', fontSize: '14px' }} />
               </label>
 
               {isSubmitting && (
