@@ -5,6 +5,7 @@ import { useState, useEffect } from 'react'
 import { ArrowUpRight, ChevronDown, ChevronRight, Menu, X } from 'lucide-react'
 import { buildWhatsAppUrl } from '@/lib/utils'
 import StandardTravelQuoteModal from '@/components/StandardTravelQuoteModal'
+import TravelClassFooter from '@/components/TravelClassFooter'
 
 function SocialPlaceholderGlyph({ label, children }: { label: string; children: React.ReactNode }) {
   return (
@@ -740,6 +741,6 @@ export default function TravelClassHome() {
 
     <section className="final-cta" id="contact"><RouteMark dark /><p className="eyebrow">The next step is yours</p><h2>Ready to start<br /><em>your journey?</em></h2><p>Tell us where you want to go. We&apos;ll help coordinate how you get there.</p><div className="hero-actions"><button className="button button-red" type="button" onClick={() => openQuoteModal()}>Request a quote <ArrowUpRight size={16} /></button><a className="text-link" href={buildWhatsAppUrl()} aria-label="Chat with Travel Class SA on WhatsApp">Chat to a consultant <ChevronRight size={16} /></a></div></section>
 
-    <footer className="site-footer"><Logo light /><p>Your journey.<br /><em>Our expertise.</em></p><div className="footer-links"><a href="#holidays">Holidays</a><a href="#corporate">Corporate</a><a href="#group-travel">Group travel</a><a href="#contact">Contact</a></div><div className="footer-contact" aria-label="Travel Class SA contact information"><span>Contact</span><a className="footer-whatsapp-link" href={buildWhatsAppUrl()} target="_blank" rel="noopener noreferrer" aria-label="Chat with Travel Class SA on WhatsApp" title="Chat on WhatsApp"><WhatsAppGlyph /></a><span>Email</span><a className="footer-email-link" href="mailto:info@travelclasssa.com" aria-label="Email Travel Class SA">info@travelclasssa.com</a><div className="footer-socials" aria-label="Travel Class SA social media placeholders">{socialPlaceholders.map(({ label, Icon }) => (<span key={label} className="footer-social-item" aria-label={`${label} — coming soon`} title={`${label} — coming soon`} role="img"><Icon /></span>))}</div></div><div className="footer-bottom"><span>© 2026 Travel Class SA</span><span>South Africa</span><p>Designed by <a href="https://sihleb.co.za" target="_blank" rel="noopener noreferrer">SihleB</a></p></div></footer>
+    <TravelClassFooter />
   </main>
 }

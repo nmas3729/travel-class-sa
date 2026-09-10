@@ -4,6 +4,7 @@ import Image from 'next/image'
 import { useState } from 'react'
 import { ArrowUpRight, ChevronRight, Menu, X } from 'lucide-react'
 import { buildWhatsAppUrl } from '@/lib/utils'
+import TravelClassFooter from '@/components/TravelClassFooter'
 
 function SocialPlaceholderGlyph({ label, children }: { label: string; children: React.ReactNode }) {
   return (
@@ -205,6 +206,7 @@ export default function VipConciergePage() {
       {/* Header */}
       <header style={{ position: 'fixed', top: 0, left: 0, right: 0, zIndex: 100, display: 'flex', alignItems: 'center', gap: '2rem', padding: '22px 5vw', background: 'rgba(8,8,8,0.92)', backdropFilter: 'blur(8px)', borderBottom: '1px solid rgba(255,255,255,0.07)' }}>
         <Logo light />
+        <a className="vip-header-phone" href="tel:+27728336872" aria-label="Call Travel Class SA on +27 72 833 6872">+27 72 833 6872</a>
         <nav aria-label="Primary navigation" style={{ display: 'flex', justifyContent: 'center', gap: 'clamp(10px,1.2vw,20px)', flex: 1 }} className="vip-desktop-nav">
           {navItems.map(item => (
             <a key={item.label} href={item.href} style={{ textTransform: 'uppercase', fontSize: '9px', letterSpacing: '.12em', opacity: item.label === 'VIP Concierge' ? 1 : 0.6, color: item.label === 'VIP Concierge' ? '#D7192D' : 'inherit' }}>{item.label}</a>
@@ -249,7 +251,7 @@ export default function VipConciergePage() {
             From private aviation and luxury accommodation to chauffeur services, exclusive experiences and personalised assistance, every detail is coordinated around you.
           </p>
           <div style={{ display: 'flex', alignItems: 'center', gap: '28px', flexWrap: 'wrap' }}>
-            <a href="#vip-enquiry" style={{ display: 'inline-flex', alignItems: 'center', gap: '18px', padding: '18px 28px', background: '#D7192D', color: '#fff', textTransform: 'uppercase', letterSpacing: '.12em', fontSize: '10px', fontWeight: 700 }}>
+            <a href={buildWhatsAppUrl()} target="_blank" rel="noopener noreferrer" style={{ display: 'inline-flex', alignItems: 'center', gap: '18px', padding: '18px 28px', background: '#D7192D', color: '#fff', textTransform: 'uppercase', letterSpacing: '.12em', fontSize: '10px', fontWeight: 700 }}>
               Speak to Your Private Travel Concierge <ArrowUpRight size={14} />
             </a>
             <a href="#vip-enquiry" style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', textTransform: 'uppercase', letterSpacing: '.12em', fontSize: '10px', fontWeight: 700, borderBottom: '1px solid rgba(240,237,232,0.4)', paddingBottom: '6px', color: '#f0ede8' }}>
@@ -524,44 +526,7 @@ export default function VipConciergePage() {
         </div>
       </section>
 
-      {/* Footer */}
-      <footer style={{ background: '#050505', color: '#f0ede8', padding: '60px 7vw 25px' }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '40px', flexWrap: 'wrap', paddingBottom: '40px', borderBottom: '1px solid #1f1f1f', marginBottom: '24px' }}>
-          <div>
-            <Logo light />
-            <p style={{ fontFamily: 'Georgia, "Times New Roman", serif', fontSize: '40px', lineHeight: .92, margin: '40px 0 0', color: '#f0ede8' }}>
-              Your journey.<br /><em style={{ color: '#D7192D', fontStyle: 'italic' }}>Our expertise.</em>
-            </p>
-          </div>
-          <nav aria-label="Footer navigation" style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
-            {[{ label: 'Home', href: '/' }, { label: 'Holidays', href: '/#holidays' }, { label: 'Corporate', href: '/#corporate' }, { label: 'Group travel', href: '/#group-travel' }, { label: 'VIP Concierge', href: '/vip-concierge' }, { label: 'Contact', href: '/#contact' }].map(link => (
-              <a key={link.label} href={link.href} style={{ textTransform: 'uppercase', letterSpacing: '.12em', fontSize: '10px', color: link.label === 'VIP Concierge' ? '#D7192D' : 'rgba(240,237,232,0.5)' }}>{link.label}</a>
-            ))}
-          </nav>
-        </div>
-        <div style={{ display: 'flex', justifyContent: 'space-between', color: 'rgba(240,237,232,0.3)', fontSize: '10px', flexWrap: 'wrap', gap: '12px', alignItems: 'center' }}>
-          <span>© 2026 Travel Class SA</span><span>South Africa</span>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flexWrap: 'wrap' }}>
-            <span style={{ color: '#f0ede8', textTransform: 'uppercase', letterSpacing: '.12em', fontSize: '10px' }}>Contact</span>
-            <span style={{ color: 'rgba(240,237,232,0.6)', textTransform: 'uppercase', letterSpacing: '.12em', fontSize: '10px' }}>Phone</span>
-            <a href="tel:+27728336872" aria-label="Call Travel Class SA on 072 833 6872" style={{ color: '#f0ede8', textDecoration: 'underline' }}>072 833 6872</a>
-            <a href={buildWhatsAppUrl()} target="_blank" rel="noopener noreferrer" aria-label="Chat with Travel Class SA on WhatsApp" style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', color: '#f0ede8', textDecoration: 'underline' }}>
-              <WhatsAppGlyph />
-              Chat on WhatsApp
-            </a>
-            <span style={{ color: 'rgba(240,237,232,0.6)', textTransform: 'uppercase', letterSpacing: '.12em', fontSize: '10px' }}>Email</span>
-            <a href="mailto:info@travelclasssa.com" aria-label="Email Travel Class SA" style={{ color: '#f0ede8', textDecoration: 'underline', textTransform: 'lowercase' }}>info@travelclasssa.com</a>
-            <div aria-label="Travel Class SA social media placeholders" style={{ display: 'inline-flex', gap: '8px', alignItems: 'center' }}>
-              {socialPlaceholders.map(({ label, Icon }) => (
-                <span key={label} aria-label={`${label} — coming soon`} title={`${label} — coming soon`} role="img" style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', width: '28px', height: '28px', borderRadius: '50%', border: '1px solid rgba(255,255,255,0.12)', color: 'rgba(240,237,232,0.7)', background: 'rgba(255,255,255,0.02)' }}>
-                  <Icon />
-                </span>
-              ))}
-            </div>
-          </div>
-          <p style={{ margin: 0 }}>Designed by <a href="https://sihleb.co.za" target="_blank" rel="noopener noreferrer" style={{ color: '#f0ede8', textDecoration: 'underline' }}>SihleB</a></p>
-        </div>
-      </footer>
+      <TravelClassFooter />
 
       <style>{`
         .vip-logo-link {
@@ -577,7 +542,17 @@ export default function VipConciergePage() {
         @media (max-width: 900px) {
           .vip-desktop-nav { display: none !important; }
           .vip-header-cta { display: none !important; }
-          .vip-logo-link { margin-right: auto; }
+          .vip-logo-link { margin-right: 0; }
+          .vip-header-phone { margin-right: auto; font-size: 11px; letter-spacing: .04em; }
+        }
+
+        .vip-header-phone {
+          flex: 0 0 auto;
+          color: #f0ede8;
+          font-size: 12px;
+          font-weight: 700;
+          letter-spacing: .08em;
+          white-space: nowrap;
         }
 
         @media (min-width: 901px) {
