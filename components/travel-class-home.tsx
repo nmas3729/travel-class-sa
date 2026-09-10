@@ -4,6 +4,104 @@ import Image from 'next/image'
 import { useState, useEffect } from 'react'
 import { ArrowUpRight, ChevronDown, ChevronRight, Menu, X } from 'lucide-react'
 
+function SocialPlaceholderGlyph({ label, children }: { label: string; children: React.ReactNode }) {
+  return (
+    <span
+      aria-label={label}
+      title={label}
+      role="img"
+      style={{
+        display: 'inline-flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        width: '28px',
+        height: '28px',
+        borderRadius: '50%',
+        border: '1px solid rgba(255,255,255,0.12)',
+        background: 'rgba(255,255,255,0.02)',
+        color: 'rgba(240,237,232,0.72)',
+      }}
+    >
+      {children}
+    </span>
+  )
+}
+
+function InstagramGlyph() {
+  return (
+    <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true" fill="none">
+      <defs>
+        <linearGradient id="ig-grad" x1="0%" y1="100%" x2="100%" y2="0%">
+          <stop offset="0%" stopColor="#f09433" />
+          <stop offset="25%" stopColor="#e6683c" />
+          <stop offset="50%" stopColor="#dc2743" />
+          <stop offset="75%" stopColor="#cc2366" />
+          <stop offset="100%" stopColor="#bc1888" />
+        </linearGradient>
+      </defs>
+      <rect width="24" height="24" rx="5.5" fill="url(#ig-grad)" />
+      <rect x="5.5" y="5.5" width="13" height="13" rx="3.5" stroke="white" strokeWidth="1.5" />
+      <circle cx="12" cy="12" r="3.2" stroke="white" strokeWidth="1.5" />
+      <circle cx="17" cy="7" r="1" fill="white" />
+    </svg>
+  )
+}
+
+function FacebookGlyph() {
+  return (
+    <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true">
+      <rect width="24" height="24" rx="5" fill="#1877F2" />
+      <path d="M13.55 21v-8.22h2.74l.42-3.12h-3.16V7.48c0-.9.3-1.56 1.66-1.56h1.77V2.96c-.3-.04-1.35-.1-2.57-.1-2.55 0-4.29 1.56-4.29 4.42v2.48H7.5v3.12h2.56V21h3.49Z" fill="white" />
+    </svg>
+  )
+}
+
+function LinkedInGlyph() {
+  return (
+    <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true">
+      <rect width="24" height="24" rx="4" fill="#0A66C2" />
+      <path d="M6.65 8.32a1.65 1.65 0 1 1 0-3.3 1.65 1.65 0 0 1 0 3.3ZM5.06 9.84h3.18v8.16H5.06V9.84Zm5.19 0h3.06v1.12h.05c.42-.8 1.47-1.65 3.02-1.65 3.23 0 3.82 2.13 3.82 4.89v3.8h-3.18v-3.54c0-1.04-.02-2.38-1.45-2.38-1.46 0-1.68 1.14-1.68 2.31v3.61H10.25V9.84Z" fill="white" />
+    </svg>
+  )
+}
+
+function TikTokGlyph() {
+  return (
+    <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true">
+      <rect width="24" height="24" rx="5" fill="#010101" />
+      <path d="M15.8 3.6c.64 1.63 1.9 2.75 3.74 3.12v2.72a6.51 6.51 0 0 1-3.4-1.05v7.13c0 2.95-2.38 5.34-5.33 5.34S5.48 18.46 5.48 15.5s2.38-5.33 5.33-5.33c.44 0 .86.08 1.26.2v2.78a3.09 3.09 0 0 0-1.26-.31c-1.64 0-2.97 1.33-2.97 2.97s1.33 2.97 2.97 2.97 2.96-1.33 2.96-2.97V3.6h2.97Z" fill="#69C9D0" />
+      <path d="M15.3 3.2c.64 1.63 1.9 2.75 3.74 3.12v2.72a6.51 6.51 0 0 1-3.4-1.05v7.13c0 2.95-2.38 5.34-5.33 5.34S4.98 17.96 4.98 15s2.38-5.33 5.33-5.33c.44 0 .86.08 1.26.2v2.78a3.09 3.09 0 0 0-1.26-.31c-1.64 0-2.97 1.33-2.97 2.97s1.33 2.97 2.97 2.97 2.96-1.33 2.96-2.97V3.2h2.97Z" fill="#EE1D52" />
+      <path d="M15.1 3c.64 1.63 1.9 2.75 3.74 3.12v2.72a6.51 6.51 0 0 1-3.4-1.05v7.13c0 2.95-2.38 5.34-5.33 5.34S4.78 17.76 4.78 14.8s2.38-5.33 5.33-5.33c.44 0 .86.08 1.26.2v2.78a3.09 3.09 0 0 0-1.26-.31c-1.64 0-2.97 1.33-2.97 2.97s1.33 2.97 2.97 2.97 2.96-1.33 2.96-2.97V3h2.97Z" fill="white" />
+    </svg>
+  )
+}
+
+function YouTubeGlyph() {
+  return (
+    <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true">
+      <rect width="24" height="24" rx="5" fill="#FF0000" />
+      <path d="M19.5 8.3a2 2 0 0 0-1.4-1.4C16.9 6.5 12 6.5 12 6.5s-4.9 0-6.1.4A2 2 0 0 0 4.5 8.3C4.1 9.5 4 12 4 12s.1 2.5.5 3.7a2 2 0 0 0 1.4 1.4C7.1 17.5 12 17.5 12 17.5s4.9 0 6.1-.4a2 2 0 0 0 1.4-1.4c.4-1.2.5-3.7.5-3.7s-.1-2.5-.5-3.7ZM10 14.5V9.5l4.5 2.5-4.5 2.5Z" fill="white" />
+    </svg>
+  )
+}
+
+function WhatsAppGlyph() {
+  return (
+    <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true">
+      <rect width="24" height="24" rx="5" fill="#25D366" />
+      <path d="M17.5 6.5A7.5 7.5 0 0 0 6.3 17.1L5 20l2.9-1.3A7.5 7.5 0 1 0 17.5 6.5Zm-5.5 11a5.5 5.5 0 0 1-3-.87l-2.1.95.95-2.06a5.5 5.5 0 1 1 4.15 1.98Zm3-4.25c-.16-.08-.97-.48-1.12-.53-.15-.06-.26-.08-.37.08-.11.16-.43.53-.53.64-.1.1-.2.12-.36.04a4.5 4.5 0 0 1-2.25-1.97c-.17-.29.17-.27.48-.9.05-.11.03-.2-.01-.28-.04-.08-.37-.9-.51-1.23-.13-.33-.27-.28-.37-.29H8.5a.7.7 0 0 0-.51.24c-.17.19-.66.64-.66 1.57s.68 1.82.77 1.94c.1.13 1.33 2.03 3.22 2.85.45.19.8.31 1.07.39.45.14.86.12 1.18-.07.36-.22.97-.4 1.1-.78.14-.38.14-.7.1-.77-.04-.07-.15-.11-.31-.19Z" fill="white" />
+    </svg>
+  )
+}
+
+const socialPlaceholders = [
+  { label: 'Instagram', Icon: InstagramGlyph },
+  { label: 'Facebook', Icon: FacebookGlyph },
+  { label: 'LinkedIn', Icon: LinkedInGlyph },
+  { label: 'TikTok', Icon: TikTokGlyph },
+  { label: 'YouTube', Icon: YouTubeGlyph },
+]
+
 const enquiryTypes = ['Holiday', 'Flights', 'Accommodation', 'Airport Transfer', 'Coach & Bus Hire', 'Corporate Travel', 'Group Travel', 'Tours & Experiences', 'Cruising', 'Visa Desk']
 const destinationOptions = [
   { name: 'Cape Town', country: 'South Africa', image: '/cape-town.webp', alt: 'Cape Town with Table Mountain in the distance' },
@@ -503,6 +601,6 @@ export default function TravelClassHome() {
 
     <section className="final-cta" id="contact"><RouteMark dark /><p className="eyebrow">The next step is yours</p><h2>Ready to start<br /><em>your journey?</em></h2><p>Tell us where you want to go. We&apos;ll help coordinate how you get there.</p><div className="hero-actions"><a className="button button-red" href="#enquiry" onClick={() => openEnquiryContext()}>Request a quote <ArrowUpRight size={16} /></a><a className="text-link" href="#enquiry" onClick={() => openEnquiryContext()}>Speak to a consultant <ChevronRight size={16} /></a></div></section>
 
-    <footer className="site-footer"><Logo light /><p>Your journey.<br /><em>Our expertise.</em></p><div className="footer-links"><a href="#holidays">Holidays</a><a href="#corporate">Corporate</a><a href="#group-travel">Group travel</a><a href="#contact">Contact</a></div><div className="footer-bottom"><span>© 2026 Travel Class SA</span><span>South Africa</span><p>Designed by <a href="https://sihleb.co.za" target="_blank" rel="noopener noreferrer">SihleB</a></p></div></footer>
+    <footer className="site-footer"><Logo light /><p>Your journey.<br /><em>Our expertise.</em></p><div className="footer-links"><a href="#holidays">Holidays</a><a href="#corporate">Corporate</a><a href="#group-travel">Group travel</a><a href="#contact">Contact</a></div><div className="footer-contact" aria-label="Travel Class SA contact information"><a className="footer-email-link" href="mailto:info@travelclasssa.com" aria-label="Email Travel Class SA">info@travelclasssa.com</a><button type="button" className="footer-whatsapp-button" aria-label="WhatsApp — coming soon" aria-disabled="true" disabled title="WhatsApp — coming soon"><WhatsAppGlyph /></button><div className="footer-socials" aria-label="Travel Class SA social media placeholders">{socialPlaceholders.map(({ label, Icon }) => (<span key={label} className="footer-social-item" aria-label={`${label} — coming soon`} title={`${label} — coming soon`} role="img"><Icon /></span>))}</div></div><div className="footer-bottom"><span>© 2026 Travel Class SA</span><span>South Africa</span><p>Designed by <a href="https://sihleb.co.za" target="_blank" rel="noopener noreferrer">SihleB</a></p></div></footer>
   </main>
 }

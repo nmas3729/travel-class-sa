@@ -4,6 +4,88 @@ import Image from 'next/image'
 import { useState } from 'react'
 import { ArrowUpRight, ChevronRight, Menu, X } from 'lucide-react'
 
+function SocialPlaceholderGlyph({ label, children }: { label: string; children: React.ReactNode }) {
+  return (
+    <span
+      aria-label={label}
+      title={label}
+      role="img"
+      style={{
+        display: 'inline-flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        width: '28px',
+        height: '28px',
+        borderRadius: '50%',
+        border: '1px solid rgba(255,255,255,0.12)',
+        background: 'rgba(255,255,255,0.02)',
+        color: 'rgba(240,237,232,0.72)',
+      }}
+    >
+      {children}
+    </span>
+  )
+}
+
+function InstagramGlyph() {
+  return (
+    <svg viewBox="0 0 24 24" width="13" height="13" aria-hidden="true" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+      <rect x="3.5" y="3.5" width="17" height="17" rx="4.75" />
+      <circle cx="12" cy="12" r="4.1" />
+      <circle cx="17.3" cy="6.7" r="1.15" fill="currentColor" stroke="none" />
+    </svg>
+  )
+}
+
+function FacebookGlyph() {
+  return (
+    <svg viewBox="0 0 24 24" width="13" height="13" aria-hidden="true" fill="currentColor">
+      <path d="M13.55 21v-8.22h2.74l.42-3.12h-3.16V7.48c0-.9.3-1.56 1.66-1.56h1.77V2.96c-.3-.04-1.35-.1-2.57-.1-2.55 0-4.29 1.56-4.29 4.42v2.48H7.5v3.12h2.56V21h3.49Z" />
+    </svg>
+  )
+}
+
+function LinkedInGlyph() {
+  return (
+    <svg viewBox="0 0 24 24" width="13" height="13" aria-hidden="true" fill="currentColor">
+      <path d="M6.65 8.32a1.65 1.65 0 1 1 0-3.3 1.65 1.65 0 0 1 0 3.3ZM5.06 9.84h3.18v8.16H5.06V9.84Zm5.19 0h3.06v1.12h.05c.42-.8 1.47-1.65 3.02-1.65 3.23 0 3.82 2.13 3.82 4.89v3.8h-3.18v-3.54c0-1.04-.02-2.38-1.45-2.38-1.46 0-1.68 1.14-1.68 2.31v3.61H10.25V9.84Z" />
+    </svg>
+  )
+}
+
+function TikTokGlyph() {
+  return (
+    <svg viewBox="0 0 24 24" width="13" height="13" aria-hidden="true" fill="currentColor">
+      <path d="M15.3 3.2c.64 1.63 1.9 2.75 3.74 3.12v2.72a6.51 6.51 0 0 1-3.4-1.05v7.13c0 2.95-2.38 5.34-5.33 5.34S4.98 17.96 4.98 15s2.38-5.33 5.33-5.33c.44 0 .86.08 1.26.2v2.78a3.09 3.09 0 0 0-1.26-.31c-1.64 0-2.97 1.33-2.97 2.97s1.33 2.97 2.97 2.97 2.96-1.33 2.96-2.97V3.2h2.97Z" />
+    </svg>
+  )
+}
+
+function YouTubeGlyph() {
+  return (
+    <svg viewBox="0 0 24 24" width="13" height="13" aria-hidden="true" fill="currentColor">
+      <path d="M21 12.13c0-1.72-.2-3.33-.6-4.43-.5-1.45-1.57-2.38-3.08-2.78C16.4 4.44 12 4.44 12 4.44s-4.4 0-5.32.48c-1.51.4-2.58 1.33-3.08 2.78C3.2 8.8 3 10.41 3 12.13c0 1.72.2 3.33.6 4.43.5 1.45 1.57 2.38 3.08 2.78.92.48 5.32.48 5.32.48s4.4 0 5.32-.48c1.51-.4 2.58-1.33 3.08-2.78.4-1.1.6-2.71.6-4.43Zm-11.05 3.63V8.83l6.36 3.47-6.36 3.46Z" />
+    </svg>
+  )
+}
+
+function WhatsAppGlyph() {
+  return (
+    <svg viewBox="0 0 24 24" width="13" height="13" aria-hidden="true" fill="none">
+      <path d="M20.36 11.22a8.12 8.12 0 1 1-15.27 4.41L3 20.5l4.92-1.08a8.12 8.12 0 0 1 12.44-8.2Z" fill="#25D366" />
+      <path d="M9.34 7.51c-.22-.51-.4-.45-.56-.46h-.46a1.14 1.14 0 0 0-.82.35c-.23.23-.9 1-.9 2.38 0 1.38.93 2.5 1.04 2.62l.14.12c.14.12 1.93 2.97 4.66 4.1.67.29 1.17.46 1.63.59.78.24 1.46.21 2.02-.02.56-.23 1.52-.72 1.76-1.39.25-.67.25-1.27.18-1.43l-.18-.25c-.17-.17-.42-.3-.89-.54-.47-.24-1.31-.61-1.74-.73-.43-.12-.7.05-.96.39l-.43.54c-.22.28-.49.31-.84.17-.34-.14-1.16-.47-2.18-1.56-1-1.06-1.66-2.33-1.86-2.72-.2-.4-.09-.7.13-.97l.3-.36c.15-.18.41-.38.56-.58.15-.2.14-.49 0-.72-.16-.24-.67-1.56-.92-2.11Z" fill="#fff" />
+    </svg>
+  )
+}
+
+const socialPlaceholders = [
+  { label: 'Instagram', Icon: InstagramGlyph },
+  { label: 'Facebook', Icon: FacebookGlyph },
+  { label: 'LinkedIn', Icon: LinkedInGlyph },
+  { label: 'TikTok', Icon: TikTokGlyph },
+  { label: 'YouTube', Icon: YouTubeGlyph },
+]
+
 function Logo({ light = false }: { light?: boolean }) {
   return (
     <a
@@ -436,8 +518,23 @@ export default function VipConciergePage() {
             ))}
           </nav>
         </div>
-        <div style={{ display: 'flex', justifyContent: 'space-between', color: 'rgba(240,237,232,0.3)', fontSize: '10px', flexWrap: 'wrap', gap: '8px' }}>
-          <span>© 2026 Travel Class SA</span><span>South Africa</span><p style={{ margin: 0 }}>Designed by <a href="https://sihleb.co.za" target="_blank" rel="noopener noreferrer" style={{ color: '#f0ede8', textDecoration: 'underline' }}>SihleB</a></p>
+        <div style={{ display: 'flex', justifyContent: 'space-between', color: 'rgba(240,237,232,0.3)', fontSize: '10px', flexWrap: 'wrap', gap: '12px', alignItems: 'center' }}>
+          <span>© 2026 Travel Class SA</span><span>South Africa</span>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flexWrap: 'wrap' }}>
+            <a href="mailto:info@travelclasssa.com" aria-label="Email Travel Class SA" style={{ color: '#f0ede8', textDecoration: 'underline', textTransform: 'lowercase' }}>info@travelclasssa.com</a>
+            <button type="button" aria-label="WhatsApp — coming soon" aria-disabled="true" disabled style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', padding: '7px 10px', background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.12)', color: 'rgba(240,237,232,0.8)', textTransform: 'uppercase', letterSpacing: '.12em', fontSize: '9px', cursor: 'not-allowed', opacity: 0.75 }}>
+              <WhatsAppGlyph />
+              WhatsApp
+            </button>
+            <div aria-label="Travel Class SA social media placeholders" style={{ display: 'inline-flex', gap: '8px', alignItems: 'center' }}>
+              {socialPlaceholders.map(({ label, Icon }) => (
+                <span key={label} aria-label={`${label} — coming soon`} title={`${label} — coming soon`} role="img" style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', width: '28px', height: '28px', borderRadius: '50%', border: '1px solid rgba(255,255,255,0.12)', color: 'rgba(240,237,232,0.7)', background: 'rgba(255,255,255,0.02)' }}>
+                  <Icon />
+                </span>
+              ))}
+            </div>
+          </div>
+          <p style={{ margin: 0 }}>Designed by <a href="https://sihleb.co.za" target="_blank" rel="noopener noreferrer" style={{ color: '#f0ede8', textDecoration: 'underline' }}>SihleB</a></p>
         </div>
       </footer>
 
