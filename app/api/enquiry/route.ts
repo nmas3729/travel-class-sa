@@ -99,6 +99,10 @@ function errorResponse(message: string, status: number) {
 
 export async function POST(request: Request) {
   try {
+    if (!request.headers.get('content-type')?.toLowerCase().startsWith('application/json')) {
+      return errorResponse('Please submit your enquiry as JSON.', 415);
+    }
+
     if (!resendApiKey || !fromAddress) {
       return errorResponse("We couldn't send your enquiry right now. Please try again or contact us directly.", 503);
     }
