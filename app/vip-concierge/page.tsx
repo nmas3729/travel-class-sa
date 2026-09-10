@@ -3,6 +3,7 @@
 import Image from 'next/image'
 import { useState } from 'react'
 import { ArrowUpRight, ChevronRight, Menu, X } from 'lucide-react'
+import { buildWhatsAppUrl } from '@/lib/utils'
 
 function SocialPlaceholderGlyph({ label, children }: { label: string; children: React.ReactNode }) {
   return (
@@ -544,10 +545,9 @@ export default function VipConciergePage() {
             <span style={{ color: '#f0ede8', textTransform: 'uppercase', letterSpacing: '.12em', fontSize: '10px' }}>Contact</span>
             <span style={{ color: 'rgba(240,237,232,0.6)', textTransform: 'uppercase', letterSpacing: '.12em', fontSize: '10px' }}>Phone</span>
             <a href="tel:+27728336872" aria-label="Call Travel Class SA on 072 833 6872" style={{ color: '#f0ede8', textDecoration: 'underline' }}>072 833 6872</a>
-            <span style={{ color: 'rgba(240,237,232,0.6)', textTransform: 'uppercase', letterSpacing: '.12em', fontSize: '10px' }}>WhatsApp</span>
-            <a href="https://wa.me/27633690057" target="_blank" rel="noopener noreferrer" aria-label="Chat with Travel Class SA on WhatsApp" style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', color: '#f0ede8', textDecoration: 'underline' }}>
+            <a href={buildWhatsAppUrl()} target="_blank" rel="noopener noreferrer" aria-label="Chat with Travel Class SA on WhatsApp" style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', color: '#f0ede8', textDecoration: 'underline' }}>
               <WhatsAppGlyph />
-              063 369 0057
+              Chat on WhatsApp
             </a>
             <span style={{ color: 'rgba(240,237,232,0.6)', textTransform: 'uppercase', letterSpacing: '.12em', fontSize: '10px' }}>Email</span>
             <a href="mailto:info@travelclasssa.com" aria-label="Email Travel Class SA" style={{ color: '#f0ede8', textDecoration: 'underline', textTransform: 'lowercase' }}>info@travelclasssa.com</a>

@@ -3,6 +3,8 @@
 import Image from 'next/image'
 import { useState, useEffect } from 'react'
 import { ArrowUpRight, ChevronDown, ChevronRight, Menu, X } from 'lucide-react'
+import { buildWhatsAppUrl } from '@/lib/utils'
+import StandardTravelQuoteModal from '@/components/StandardTravelQuoteModal'
 
 function SocialPlaceholderGlyph({ label, children }: { label: string; children: React.ReactNode }) {
   return (
@@ -150,14 +152,25 @@ export default function TravelClassHome() {
   const [destination, setDestination] = useState('')
   const [name, setName] = useState('')
   const [email, setEmail] = useState('')
+  const [phone, setPhone] = useState('')
   const [dates, setDates] = useState('')
+  const [travellers, setTravellers] = useState('')
+  const [notes, setNotes] = useState('')
   const [activeHeroIndex, setActiveHeroIndex] = useState(0)
   const [errorMsg, setErrorMsg] = useState('')
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const [selectedServices, setSelectedServices] = useState<string[]>([])
   const [isAutoPlaying, setIsAutoPlaying] = useState(true)
   const [reducedMotion, setReducedMotion] = useState(false)
+  const [modalOpen, setModalOpen] = useState(false)
+  const [modalService, setModalService] = useState('')
 
   const inputStyle: React.CSSProperties = {}
+
+  function openQuoteModal(initialService = '') {
+    setModalService(initialService)
+    setModalOpen(true)
+  }
 
   function openEnquiryContext(context?: { journeyType?: string; destination?: string; step?: number }) {
     const nextJourneyType = context?.journeyType ?? ''
@@ -175,13 +188,22 @@ export default function TravelClassHome() {
     setStep(nextStep)
     setSubmitted(false)
     setErrorMsg('')
+    if (nextJourneyType) {
+      setSelectedServices([nextJourneyType])
+    } else {
+      setSelectedServices([])
+    }
+  }
+
+  function toggleService(service: string) {
+    setSelectedServices(prev => prev.includes(service) ? prev.filter(item => item !== service) : [...prev, service])
   }
 
   function openDestinationContext(destination: string) {
     openEnquiryContext({ destination, step: 1 })
   }
 
-  async function handleSubmit(event: React.MouseEvent | React.FormEvent) {
+  async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
     if (isSubmitting) {
       return;
@@ -191,13 +213,18 @@ export default function TravelClassHome() {
     setErrorMsg('');
 
     const payload = {
-      type: 'main',
+      type: 'standard',
       selected,
+      selectedServices,
       destination,
       dates,
+      travellers,
       name,
       email,
+      phone,
+      notes,
     };
+
     try {
       const res = await fetch('/api/enquiry', {
         method: 'POST',
@@ -207,6 +234,7 @@ export default function TravelClassHome() {
       const json = await res.json();
       if (json.success) {
         setSubmitted(true);
+        setErrorMsg('');
       } else {
         setErrorMsg(json.error || 'We couldn\'t send your enquiry right now. Please try again or contact us directly.');
       }
@@ -262,8 +290,11 @@ export default function TravelClassHome() {
   }, [menuOpen])
 
   return <main id="top">
+    <StandardTravelQuoteModal open={modalOpen} initialService={modalService} onClose={() => setModalOpen(false)} />
+
     <header className="site-header">
       <Logo />
+      <a className="header-phone" href="tel:0728336872" aria-label="Call Travel Class SA on 072 833 6872">072 833 6872</a>
       <nav className="desktop-nav" aria-label="Primary navigation">
         <a href="#holidays">Holidays</a>
         <a href="#flights">Flights</a>
@@ -298,10 +329,11 @@ export default function TravelClassHome() {
                 key={item.label}
                 href={item.href}
                 role="menuitem"
-                onClick={() => {
+                onClick={(event) => {
+                  event.preventDefault()
                   setServicesOpen(false)
                   if (item.journeyType) {
-                    openEnquiryContext({ journeyType: item.journeyType, step: 0 })
+                    openQuoteModal(item.journeyType)
                   }
                 }}
               >
@@ -316,7 +348,7 @@ export default function TravelClassHome() {
         <a href="/vip-concierge" style={{ color: '#D7192D', fontWeight: 700 }}>VIP Concierge</a>
         <a href="#about">About</a>
       </nav>
-      <a className="header-cta" href="#enquiry">Request a quote <ArrowUpRight size={15} /></a>
+      <button className="header-cta" type="button" onClick={() => openQuoteModal()}>Request a quote <ArrowUpRight size={15} /></button>
       <button className="menu-toggle" aria-label={menuOpen ? 'Close menu' : 'Open menu'} onClick={() => setMenuOpen(!menuOpen)}>{menuOpen ? <X /> : <Menu />}</button>
     </header>
     {menuOpen && (
@@ -338,10 +370,11 @@ export default function TravelClassHome() {
               {serviceDropdownItems.map(item => (
                 <a
                   key={item.label}
-                  onClick={() => {
+                  onClick={(event) => {
+                    event.preventDefault()
                     setMenuOpen(false)
                     if (item.journeyType) {
-                      openEnquiryContext({ journeyType: item.journeyType, step: 0 })
+                      openQuoteModal(item.journeyType)
                     }
                   }}
                   href={item.href}
@@ -357,7 +390,7 @@ export default function TravelClassHome() {
         <a onClick={() => setMenuOpen(false)} href="#travel-premium">Travel Premium</a>
         <a onClick={() => setMenuOpen(false)} href="/vip-concierge" style={{ color: '#D7192D', fontWeight: 700 }}>VIP Concierge</a>
         <a onClick={() => setMenuOpen(false)} href="#about">About</a>
-        <a className="mobile-nav-cta" onClick={() => setMenuOpen(false)} href="#enquiry">Request a quote <ArrowUpRight size={15} /></a>
+        <button className="mobile-nav-cta" type="button" onClick={() => { setMenuOpen(false); openQuoteModal() }}>Request a quote <ArrowUpRight size={15} /></button>
       </nav>
     )}
 
@@ -499,8 +532,8 @@ export default function TravelClassHome() {
         <h1><span>Your journey.</span><br /><em>Our expertise.</em></h1>
         <p className="hero-body">From flights and accommodation to transfers, group travel, corporate travel and unforgettable experiences, Travel Class SA brings your journey together through one trusted travel partner.</p>
         <div className="hero-actions">
-          <a className="button button-red" href="#enquiry" onClick={() => openEnquiryContext()}>Request a quote <ArrowUpRight size={16} /></a>
-          <a className="text-link" href="#enquiry" onClick={() => openEnquiryContext()}>Speak to a consultant <ChevronRight size={16} /></a>
+          <button className="button button-red" type="button" onClick={() => openQuoteModal()}>Request a quote <ArrowUpRight size={16} /></button>
+          <a className="text-link" href={buildWhatsAppUrl()} aria-label="Chat with Travel Class SA on WhatsApp">Speak to a consultant <ChevronRight size={16} /></a>
         </div>
       </div>
       <div className="premium-hero-visual">
@@ -551,20 +584,74 @@ export default function TravelClassHome() {
     </section>
 
     <section className="enquiry-section" id="enquiry"><div className="section-label">Start here <span>01—03</span></div><div className="enquiry-grid"><div><p className="eyebrow red">Your journey begins</p><h2>Where are<br /><em>you going?</em></h2><p className="section-intro">Tell us what you&apos;re planning. We&apos;ll help coordinate the journey.</p><div className="journey-progress"><span className="progress-active" /><span /><span /></div></div><div className="enquiry-panel"><p className="panel-kicker">Step {step + 1} of 3</p>{step === 0 && <><h3>What kind of journey are you planning?</h3><div className="choice-list">{enquiryTypes.map(type => <button key={type} className={selected === type ? 'choice selected' : 'choice'} onClick={() => setSelected(type)}>{type}<ChevronRight size={17} /></button>)}</div></>}{step === 1 && <><h3>Where will your journey take you?</h3><label>Destination<input value={destination} onChange={e => setDestination(e.target.value)} placeholder="e.g. Cape Town, Mauritius, Paris" /></label><label>Travel dates<input value={dates} onChange={e => setDates(e.target.value)} type="text" placeholder="When would you like to travel?" /></label></>}{step === 2 && (
-      <>
-        <h3>Let’s make it personal.</h3>
-        <label>
-          Your name
-          <input placeholder="Full name" value={name} onChange={e => setName(e.target.value)} required style={inputStyle} />
-        </label>
-        <label>
-          Email or WhatsApp
-          <input placeholder="you@example.com" value={email} onChange={e => setEmail(e.target.value)} required style={inputStyle} />
-        </label>
-        <button className="panel-next" onClick={handleSubmit} disabled={isSubmitting}>
-          {isSubmitting ? 'Sending enquiry…' : 'Send enquiry'} <ArrowUpRight size={16} />
+      <form onSubmit={handleSubmit} noValidate style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
+        <h3 style={{ fontFamily: 'Georgia, "Times New Roman", serif', fontWeight: 400, fontSize: '28px', lineHeight: 1.2, margin: '0 0 8px', color: '#f0ede8' }}>Let’s make it personal.</h3>
+
+        <div style={{ display: 'grid', gap: '14px' }}>
+          <label htmlFor="home-name" style={{ display: 'grid', gap: '8px', fontSize: '10px', textTransform: 'uppercase', letterSpacing: '.1em', color: 'rgba(240,237,232,0.6)' }}>
+            Full name <span style={{ color: '#D7192D' }}>*</span>
+            <input id="home-name" name="name" placeholder="Full name" value={name} onChange={e => setName(e.target.value)} required style={{ ...inputStyle, border: '0', borderBottom: '1px solid rgba(255,255,255,0.15)', background: 'transparent', color: '#f0ede8', padding: '10px 0', outline: '0', fontFamily: 'Arial, Helvetica, sans-serif', fontSize: '14px' }} />
+          </label>
+
+          <label htmlFor="home-email" style={{ display: 'grid', gap: '8px', fontSize: '10px', textTransform: 'uppercase', letterSpacing: '.1em', color: 'rgba(240,237,232,0.6)' }}>
+            Email address <span style={{ color: '#D7192D' }}>*</span>
+            <input id="home-email" name="email" type="email" placeholder="you@example.com" value={email} onChange={e => setEmail(e.target.value)} required style={{ ...inputStyle, border: '0', borderBottom: '1px solid rgba(255,255,255,0.15)', background: 'transparent', color: '#f0ede8', padding: '10px 0', outline: '0', fontFamily: 'Arial, Helvetica, sans-serif', fontSize: '14px' }} />
+          </label>
+
+          <label htmlFor="home-phone" style={{ display: 'grid', gap: '8px', fontSize: '10px', textTransform: 'uppercase', letterSpacing: '.1em', color: 'rgba(240,237,232,0.6)' }}>
+            Phone / WhatsApp
+            <input id="home-phone" name="phone" type="tel" placeholder="+27 000 000 0000" value={phone} onChange={e => setPhone(e.target.value)} style={{ ...inputStyle, border: '0', borderBottom: '1px solid rgba(255,255,255,0.15)', background: 'transparent', color: '#f0ede8', padding: '10px 0', outline: '0', fontFamily: 'Arial, Helvetica, sans-serif', fontSize: '14px' }} />
+          </label>
+
+          <label htmlFor="home-destination" style={{ display: 'grid', gap: '8px', fontSize: '10px', textTransform: 'uppercase', letterSpacing: '.1em', color: 'rgba(240,237,232,0.6)' }}>
+            Destination
+            <input id="home-destination" name="destination" placeholder="Where would you like to travel?" value={destination} onChange={e => setDestination(e.target.value)} style={{ ...inputStyle, border: '0', borderBottom: '1px solid rgba(255,255,255,0.15)', background: 'transparent', color: '#f0ede8', padding: '10px 0', outline: '0', fontFamily: 'Arial, Helvetica, sans-serif', fontSize: '14px' }} />
+          </label>
+
+          <label htmlFor="home-dates" style={{ display: 'grid', gap: '8px', fontSize: '10px', textTransform: 'uppercase', letterSpacing: '.1em', color: 'rgba(240,237,232,0.6)' }}>
+            Travel dates
+            <input id="home-dates" name="dates" placeholder="When would you like to travel?" value={dates} onChange={e => setDates(e.target.value)} style={{ ...inputStyle, border: '0', borderBottom: '1px solid rgba(255,255,255,0.15)', background: 'transparent', color: '#f0ede8', padding: '10px 0', outline: '0', fontFamily: 'Arial, Helvetica, sans-serif', fontSize: '14px' }} />
+          </label>
+
+          <label htmlFor="home-travellers" style={{ display: 'grid', gap: '8px', fontSize: '10px', textTransform: 'uppercase', letterSpacing: '.1em', color: 'rgba(240,237,232,0.6)' }}>
+            Number of travellers
+            <input id="home-travellers" name="travellers" type="number" min="1" placeholder="1" value={travellers} onChange={e => setTravellers(e.target.value)} style={{ ...inputStyle, border: '0', borderBottom: '1px solid rgba(255,255,255,0.15)', background: 'transparent', color: '#f0ede8', padding: '10px 0', outline: '0', fontFamily: 'Arial, Helvetica, sans-serif', fontSize: '14px' }} />
+          </label>
+
+          <fieldset style={{ border: '0', padding: 0, margin: '0 0 8px' }}>
+            <legend style={{ fontSize: '10px', textTransform: 'uppercase', letterSpacing: '.1em', color: 'rgba(240,237,232,0.6)', marginBottom: '12px', display: 'block' }}>What do you need?</legend>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, minmax(0, 1fr))', gap: '10px' }}>
+              {enquiryTypes.map(type => (
+                <label key={type} style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '11px', cursor: 'pointer', lineHeight: 1.45, color: selectedServices.includes(type) ? '#f0ede8' : 'rgba(240,237,232,0.5)' }}>
+                  <input type="checkbox" checked={selectedServices.includes(type)} onChange={() => toggleService(type)} style={{ accentColor: '#D7192D' }} aria-label={type} />
+                  {type}
+                </label>
+              ))}
+            </div>
+          </fieldset>
+
+          <label htmlFor="home-notes" style={{ display: 'grid', gap: '8px', fontSize: '10px', textTransform: 'uppercase', letterSpacing: '.1em', color: 'rgba(240,237,232,0.6)' }}>
+            Additional requirements / notes
+            <textarea id="home-notes" name="notes" rows={4} placeholder="Any specific requirements, preferences or questions..." value={notes} onChange={e => setNotes(e.target.value)} style={{ border: '1px solid rgba(255,255,255,0.12)', borderRadius: 0, background: 'transparent', color: '#f0ede8', padding: '10px 12px', outline: '0', resize: 'vertical', fontFamily: 'Arial, Helvetica, sans-serif', fontSize: '14px' }} />
+          </label>
+        </div>
+
+        {submitted && (
+          <p style={{ margin: '8px 0 0', color: '#f0ede8', fontSize: '14px' }}>Enquiry received. We&apos;ll be in touch shortly.</p>
+        )}
+
+        {isSubmitting && (
+          <p style={{ margin: '0 0 16px', fontSize: '12px', letterSpacing: '.08em', textTransform: 'uppercase', color: '#f0ede8' }}>Sending enquiry…</p>
+        )}
+
+        {errorMsg && (
+          <p style={{ margin: '0 0 16px', fontSize: '13px', lineHeight: 1.6, color: '#f7c7c7' }}>{errorMsg}</p>
+        )}
+
+        <button type="submit" className="panel-next" disabled={isSubmitting} style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'space-between', gap: '18px', padding: '18px 24px', background: isSubmitting ? '#8a1a22' : '#D7192D', color: '#fff', border: 0, cursor: isSubmitting ? 'not-allowed' : 'pointer', textTransform: 'uppercase', letterSpacing: '.12em', fontSize: '10px', fontWeight: 700, opacity: isSubmitting ? 0.8 : 1 }}>
+          {isSubmitting ? 'Sending enquiry…' : 'Send Your Enquiry'} <ArrowUpRight size={16} />
         </button>
-      </>
+      </form>
     )}
     {step < 2 && (
       <button className="panel-next" onClick={() => setStep(step + 1)}>
@@ -594,8 +681,8 @@ export default function TravelClassHome() {
           <span style={{ zIndex: 2 }}>01 / 10</span>
           <h3 style={{ position: 'relative', zIndex: 2 }}>Flights</h3>
           <p style={{ position: 'relative', zIndex: 2 }}>Domestic, international, multi-city and everything between. We find the route that makes sense for you.</p>
-          <a href="#enquiry" style={{ position: 'relative', zIndex: 2 }} onClick={() => openEnquiryContext({ journeyType: 'Flights' })}>Request a flight quote <ArrowUpRight size={15} /></a>
-        </div><div className="service-list">{[['Accommodation', 'Plan a stay', 'Accommodation'], ['Airport Transfers', 'Arrange a transfer', 'Airport Transfer'], ['Coach & Bus Hire', 'Hire a coach', 'Coach & Bus Hire'], ['Corporate Travel', 'Move your team', 'Corporate Travel'], ['Group Travel', 'Plan group travel', 'Group Travel'], ['Cruising', 'Plan a cruise', 'Cruising'], ['Holiday Packages', 'Explore holidays', 'Holiday'], ['Tours & Experiences', 'Discover experiences', 'Tours & Experiences'], ['Visa Desk', 'Get visa guidance', 'Visa Desk']].map((item, i) => <a key={item[0]} href="#enquiry" onClick={() => openEnquiryContext({ journeyType: item[2] })}><span>0{i + 2}</span><span className="service-list-copy">{item[0]}<small>{item[1]}</small></span><ArrowUpRight size={15} /></a>)}</div>        <div className="service-feature" id="cruising" style={{ position: 'relative', overflow: 'hidden' }}>
+          <a href="#enquiry" style={{ position: 'relative', zIndex: 2 }} onClick={(event) => { event.preventDefault(); openQuoteModal('Flights') }}>Request a flight quote <ArrowUpRight size={15} /></a>
+        </div><div className="service-list">{[['Accommodation', 'Plan a stay', 'Accommodation'], ['Airport Transfers', 'Arrange a transfer', 'Airport Transfer'], ['Coach & Bus Hire', 'Hire a coach', 'Coach & Bus Hire'], ['Corporate Travel', 'Move your team', 'Corporate Travel'], ['Group Travel', 'Plan group travel', 'Group Travel'], ['Cruising', 'Plan a cruise', 'Cruising'], ['Holiday Packages', 'Explore holidays', 'Holiday'], ['Tours & Experiences', 'Discover experiences', 'Tours & Experiences'], ['Visa Desk', 'Get visa guidance', 'Visa Desk']].map((item, i) => <a key={item[0]} href="#enquiry" onClick={(event) => { event.preventDefault(); openQuoteModal(item[2]) }}><span>0{i + 2}</span><span className="service-list-copy">{item[0]}<small>{item[1]}</small></span><ArrowUpRight size={15} /></a>)}</div>        <div className="service-feature" id="cruising" style={{ position: 'relative', overflow: 'hidden' }}>
           <Image
             src="/cruise.png"
             alt="Luxury ocean cruise liner docked under evening sky with calm water reflection"
@@ -615,7 +702,7 @@ export default function TravelClassHome() {
           <span style={{ zIndex: 2 }}>07 / 10</span>
           <h3 style={{ position: 'relative', zIndex: 2 }}>Cruising</h3>
           <p style={{ position: 'relative', zIndex: 2 }}>Cruise holiday packages and related cruise travel options, coordinated around your journey, dates and destination.</p>
-          <a href="#enquiry" style={{ position: 'relative', zIndex: 2 }} onClick={() => openEnquiryContext({ journeyType: 'Cruising' })}>Plan a cruise <ArrowUpRight size={15} /></a>
+          <a href="#enquiry" style={{ position: 'relative', zIndex: 2 }} onClick={(event) => { event.preventDefault(); openQuoteModal('Cruising') }}>Plan a cruise <ArrowUpRight size={15} /></a>
         </div><div className="service-feature" id="visa-desk" style={{ position: 'relative', overflow: 'hidden' }}>
           <Image
             src="/visa-card.png"
@@ -636,14 +723,14 @@ export default function TravelClassHome() {
           <span style={{ zIndex: 2 }}>08 / 10</span>
           <h3 style={{ position: 'relative', zIndex: 2 }}>Visa Desk</h3>
           <p style={{ position: 'relative', zIndex: 2 }}>Guidance on visa requirements and supporting documentation for your destination. We help you understand what&apos;s needed and support you in preparing your travel visa documentation. Visa requirements vary by destination and traveller circumstances.</p>
-          <a href="#enquiry" style={{ position: 'relative', zIndex: 2 }} onClick={() => openEnquiryContext({ journeyType: 'Visa Desk' })}>Get visa guidance <ArrowUpRight size={15} /></a>
+          <a href="#enquiry" style={{ position: 'relative', zIndex: 2 }} onClick={(event) => { event.preventDefault(); openQuoteModal('Visa Desk') }}>Get visa guidance <ArrowUpRight size={15} /></a>
         </div></div></section>
 
-    <section className="destination-section" id="holidays"><div className="destination-image"><Image src={destinationOptions[0].image} alt={destinationOptions[0].alt} fill sizes="(max-width: 800px) 100vw, 62vw" /><div className="image-caption">Featured destination / 01</div></div><div className="destination-copy"><p className="eyebrow">Go further</p><h2>{destinationOptions[0].name}<br /><em>{destinationOptions[0].country}</em></h2><p>Where mountain meets ocean, and every day feels like the beginning of something. Let us take you there.</p><a className="text-link" href="#enquiry" onClick={() => openDestinationContext(destinationOptions[0].name)}>Plan this journey <ChevronRight size={16} /></a><div className="destination-list">{destinationOptions.slice(1).map((destination, i) => <button key={destination.name} type="button" onClick={() => openDestinationContext(destination.name)} style={{ appearance: 'none', border: 0, background: 'transparent', padding: 0, width: '100%', textAlign: 'left', font: 'inherit', color: 'inherit', cursor: 'pointer' }}><span><b>{String(i + 2).padStart(2, '0')}</b>{destination.name}</span></button>)}</div></div></section>
+    <section className="destination-section" id="holidays"><div className="destination-image"><Image src={destinationOptions[0].image} alt={destinationOptions[0].alt} fill sizes="(max-width: 800px) 100vw, 62vw" /><div className="image-caption">Featured destination / 01</div></div><div className="destination-copy"><p className="eyebrow">Go further</p><h2>{destinationOptions[0].name}<br /><em>{destinationOptions[0].country}</em></h2><p>Where mountain meets ocean, and every day feels like the beginning of something. Let us take you there.</p><a className="text-link" href="#enquiry" onClick={(event) => { event.preventDefault(); openQuoteModal('Holiday') }}>Plan this journey <ChevronRight size={16} /></a><div className="destination-list">{destinationOptions.slice(1).map((destination, i) => <button key={destination.name} type="button" onClick={() => openQuoteModal('Holiday')} style={{ appearance: 'none', border: 0, background: 'transparent', padding: 0, width: '100%', textAlign: 'left', font: 'inherit', color: 'inherit', cursor: 'pointer' }}><span><b>{String(i + 2).padStart(2, '0')}</b>{destination.name}</span></button>)}</div></div></section>
 
-    <section className="dark-feature corporate" id="corporate"><div className="feature-marker">TC / 04</div><div><p className="eyebrow red">For business that moves</p><h2>Corporate travel.<br /><em>Without the complexity.</em></h2></div><div className="feature-detail"><p>Coordinate business flights, accommodation, transfers, shuttles, conferences and employee travel through one point of coordination.</p><div className="detail-list">{['Business flights', 'Accommodation', 'Transfers & shuttles', 'Car hire', 'Conferences', 'Group travel', 'Employee travel', 'Reporting & support', 'Emergency assistance'].map(x => <span key={x}>{x}</span>)}</div><a className="button button-outline" href="#enquiry" onClick={() => openEnquiryContext({ journeyType: 'Corporate Travel', step: 0 })}>Talk to our corporate team <ArrowUpRight size={16} /></a></div></section>
+    <section className="dark-feature corporate" id="corporate"><div className="feature-marker">TC / 04</div><div><p className="eyebrow red">For business that moves</p><h2>Corporate travel.<br /><em>Without the complexity.</em></h2></div><div className="feature-detail"><p>Coordinate business flights, accommodation, transfers, shuttles, conferences and employee travel through one point of coordination.</p><div className="detail-list">{['Business flights', 'Accommodation', 'Transfers & shuttles', 'Car hire', 'Conferences', 'Group travel', 'Employee travel', 'Reporting & support', 'Emergency assistance'].map(x => <span key={x}>{x}</span>)}</div><a className="button button-outline" href="#enquiry" onClick={(event) => { event.preventDefault(); openQuoteModal('Corporate Travel') }}>Talk to our corporate team <ArrowUpRight size={16} /></a></div></section>
 
-    <section className="group-section" id="group-travel"><div className="group-copy"><p className="eyebrow red">For every kind of group</p><h2>One group.<br />One itinerary.<br /><em>One travel partner.</em></h2><p>Schools, universities, churches, sports teams, NGOs, conferences and weddings. We coordinate the whole picture so everyone can enjoy the moment.</p><a className="button button-red" href="#enquiry" onClick={() => openEnquiryContext({ journeyType: 'Group Travel', step: 0 })}>Plan group travel <ArrowUpRight size={16} /></a></div><div className="group-steps">{['Flights', 'Accommodation', 'Transfers', 'Coach', 'Activities', 'Meals', 'Itinerary management'].map((x, i) => <div key={x}><span>0{i + 1}</span>{x}<ChevronRight size={15} /></div>)}</div></section>
+    <section className="group-section" id="group-travel"><div className="group-copy"><p className="eyebrow red">For every kind of group</p><h2>One group.<br />One itinerary.<br /><em>One travel partner.</em></h2><p>Schools, universities, churches, sports teams, NGOs, conferences and weddings. We coordinate the whole picture so everyone can enjoy the moment.</p><a className="button button-red" href="#enquiry" onClick={(event) => { event.preventDefault(); openQuoteModal('Group Travel') }}>Plan group travel <ArrowUpRight size={16} /></a></div><div className="group-steps">{['Flights', 'Accommodation', 'Transfers', 'Coach', 'Activities', 'Meals', 'Itinerary management'].map((x, i) => <div key={x}><span>0{i + 1}</span>{x}<ChevronRight size={15} /></div>)}</div></section>
 
     <section className="premium-section" id="travel-premium"><div className="premium-stamp">TC<br /><span>SA</span></div><div><p className="eyebrow red">A new way to travel</p><h2>Plan today.<br /><em>Travel tomorrow.</em></h2><p>Travel Premium Plan — currently being developed. Travel Class SA is exploring a future structured travel funding solution through an appropriately licensed financial-services or insurance partner. Nothing here is an active financial product.</p><div className="contribution-list" aria-label="Potential illustrative contribution levels">{['R250', 'R500', 'R750', 'R1,000', 'R1,500+'].map(x => <span key={x}>{x}</span>)}</div><small className="premium-note">Potential illustrative contribution levels only.</small><a className="button button-dark" href="#contact">Join the waitlist <ArrowUpRight size={16} /></a></div></section>
 
@@ -651,8 +738,8 @@ export default function TravelClassHome() {
 
     <section className="about-section" id="about"><div><p className="eyebrow red">About Travel Class SA</p><h2>Travel made<br /><em>more personal.</em></h2></div><div className="about-copy"><p>Travel Class SA is a South African full-service Travel Management Company coordinating complete journeys for individuals, families, couples, leisure travellers, groups and organisations.</p><p>Our aim is to make travel simple, affordable, convenient, professional, personalised and memorable.</p><div className="about-principles"><span>Simple</span><span>Convenient</span><span>Personalised</span><span>Memorable</span></div></div></section>
 
-    <section className="final-cta" id="contact"><RouteMark dark /><p className="eyebrow">The next step is yours</p><h2>Ready to start<br /><em>your journey?</em></h2><p>Tell us where you want to go. We&apos;ll help coordinate how you get there.</p><div className="hero-actions"><a className="button button-red" href="#enquiry" onClick={() => openEnquiryContext()}>Request a quote <ArrowUpRight size={16} /></a><a className="text-link" href="#enquiry" onClick={() => openEnquiryContext()}>Speak to a consultant <ChevronRight size={16} /></a></div></section>
+    <section className="final-cta" id="contact"><RouteMark dark /><p className="eyebrow">The next step is yours</p><h2>Ready to start<br /><em>your journey?</em></h2><p>Tell us where you want to go. We&apos;ll help coordinate how you get there.</p><div className="hero-actions"><button className="button button-red" type="button" onClick={() => openQuoteModal()}>Request a quote <ArrowUpRight size={16} /></button><a className="text-link" href={buildWhatsAppUrl()} aria-label="Chat with Travel Class SA on WhatsApp">Speak to a consultant <ChevronRight size={16} /></a></div></section>
 
-    <footer className="site-footer"><Logo light /><p>Your journey.<br /><em>Our expertise.</em></p><div className="footer-links"><a href="#holidays">Holidays</a><a href="#corporate">Corporate</a><a href="#group-travel">Group travel</a><a href="#contact">Contact</a></div><div className="footer-contact" aria-label="Travel Class SA contact information"><span>Contact</span><span>Phone</span><a className="footer-phone-link" href="tel:+27728336872" aria-label="Call Travel Class SA on 072 833 6872">072 833 6872</a><span>WhatsApp</span><a className="footer-whatsapp-link" href="https://wa.me/27633690057" target="_blank" rel="noopener noreferrer" aria-label="Chat with Travel Class SA on WhatsApp"><WhatsAppGlyph />063 369 0057</a><span>Email</span><a className="footer-email-link" href="mailto:info@travelclasssa.com" aria-label="Email Travel Class SA">info@travelclasssa.com</a><div className="footer-socials" aria-label="Travel Class SA social media placeholders">{socialPlaceholders.map(({ label, Icon }) => (<span key={label} className="footer-social-item" aria-label={`${label} — coming soon`} title={`${label} — coming soon`} role="img"><Icon /></span>))}</div></div><div className="footer-bottom"><span>© 2026 Travel Class SA</span><span>South Africa</span><p>Designed by <a href="https://sihleb.co.za" target="_blank" rel="noopener noreferrer">SihleB</a></p></div></footer>
+    <footer className="site-footer"><Logo light /><p>Your journey.<br /><em>Our expertise.</em></p><div className="footer-links"><a href="#holidays">Holidays</a><a href="#corporate">Corporate</a><a href="#group-travel">Group travel</a><a href="#contact">Contact</a></div><div className="footer-contact" aria-label="Travel Class SA contact information"><span>Contact</span><a className="footer-whatsapp-link" href={buildWhatsAppUrl()} target="_blank" rel="noopener noreferrer" aria-label="Chat with Travel Class SA on WhatsApp" title="Chat on WhatsApp"><WhatsAppGlyph /></a><span>Email</span><a className="footer-email-link" href="mailto:info@travelclasssa.com" aria-label="Email Travel Class SA">info@travelclasssa.com</a><div className="footer-socials" aria-label="Travel Class SA social media placeholders">{socialPlaceholders.map(({ label, Icon }) => (<span key={label} className="footer-social-item" aria-label={`${label} — coming soon`} title={`${label} — coming soon`} role="img"><Icon /></span>))}</div></div><div className="footer-bottom"><span>© 2026 Travel Class SA</span><span>South Africa</span><p>Designed by <a href="https://sihleb.co.za" target="_blank" rel="noopener noreferrer">SihleB</a></p></div></footer>
   </main>
 }
