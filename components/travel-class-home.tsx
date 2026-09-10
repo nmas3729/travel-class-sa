@@ -5,7 +5,18 @@ import { useState, useEffect } from 'react'
 import { ArrowUpRight, ChevronDown, ChevronRight, Menu, X } from 'lucide-react'
 
 const enquiryTypes = ['Holiday', 'Flights', 'Accommodation', 'Airport Transfer', 'Coach & Bus Hire', 'Corporate Travel', 'Group Travel', 'Tours & Experiences', 'Cruising', 'Visa Desk']
-const destinations = ['Kruger', 'Garden Route', 'Durban', 'Victoria Falls', 'Zanzibar', 'Mauritius', 'Namibia', 'Mozambique', 'Botswana']
+const destinationOptions = [
+  { name: 'Cape Town', country: 'South Africa', image: '/cape-town.webp', alt: 'Cape Town with Table Mountain in the distance' },
+  { name: 'Kruger' },
+  { name: 'Garden Route' },
+  { name: 'Durban' },
+  { name: 'Victoria Falls' },
+  { name: 'Zanzibar' },
+  { name: 'Mauritius' },
+  { name: 'Namibia' },
+  { name: 'Mozambique' },
+  { name: 'Botswana' },
+]
 
 function RouteMark({ dark = false }: { dark?: boolean }) {
   return <span className={`route-mark ${dark ? 'route-mark-dark' : ''}`} aria-hidden="true"><span /><span /><span /></span>
@@ -13,12 +24,13 @@ function RouteMark({ dark = false }: { dark?: boolean }) {
 
 function Logo({ light = false }: { light?: boolean }) {
   return (
-    <a href="#top" className={`logo-image-link ${light ? 'logo-light' : ''}`} aria-label="Travel Class SA home" style={{ display: 'inline-block' }}>
+    <a href="/" className={`logo-image-link ${light ? 'logo-light' : ''}`} aria-label="Travel Class SA home" style={{ display: 'inline-block' }}>
       <Image 
         src="/logo.png" 
         alt="Travel Class SA" 
         width={167} 
         height={127} 
+        priority
         style={{ 
           width: 'auto', 
           height: light ? 'clamp(55px, 7vw, 80px)' : 'clamp(40px, 5vw, 55px)', 
@@ -36,15 +48,39 @@ export default function TravelClassHome() {
   const [mobileServicesOpen, setMobileServicesOpen] = useState(false)
   const [step, setStep] = useState(0)
   const [submitted, setSubmitted] = useState(false)
-  const [selected, setSelected] = useState('Holiday')
+  const [selected, setSelected] = useState('')
   const [destination, setDestination] = useState('')
   const [name, setName] = useState('')
   const [email, setEmail] = useState('')
   const [dates, setDates] = useState('')
   const [activeHeroIndex, setActiveHeroIndex] = useState(0)
   const [errorMsg, setErrorMsg] = useState('')
+  const [isAutoPlaying, setIsAutoPlaying] = useState(true)
+  const [reducedMotion, setReducedMotion] = useState(false)
 
   const inputStyle: React.CSSProperties = {}
+
+  function openEnquiryContext(context?: { journeyType?: string; destination?: string; step?: number }) {
+    const nextJourneyType = context?.journeyType ?? ''
+    const nextDestination = context?.destination ?? ''
+    const nextStep = typeof context?.step === 'number'
+      ? context.step
+      : nextDestination
+        ? 1
+        : nextJourneyType
+          ? 0
+          : 0
+
+    setSelected(nextJourneyType)
+    setDestination(nextDestination)
+    setStep(nextStep)
+    setSubmitted(false)
+    setErrorMsg('')
+  }
+
+  function openDestinationContext(destination: string) {
+    openEnquiryContext({ destination, step: 1 })
+  }
 
   async function handleSubmit(event: React.MouseEvent | React.FormEvent) {
     event.preventDefault();
@@ -74,12 +110,12 @@ export default function TravelClassHome() {
   }
 
   const serviceDropdownItems = [
-    { label: 'Accommodation', href: '#accommodation' },
-    { label: 'Airport Transfers', href: '#airport-transfers' },
-    { label: 'Coach & Bus Hire', href: '#coach-bus-hire' },
-    { label: 'Tours & Experiences', href: '#tours-experiences' },
-    { label: 'Cruising', href: '#cruising' },
-    { label: 'Visa Desk', href: '#visa-desk' },
+    { label: 'Accommodation', href: '#enquiry', journeyType: 'Accommodation' },
+    { label: 'Airport Transfers', href: '#enquiry', journeyType: 'Airport Transfer' },
+    { label: 'Coach & Bus Hire', href: '#enquiry', journeyType: 'Coach & Bus Hire' },
+    { label: 'Tours & Experiences', href: '#enquiry', journeyType: 'Tours & Experiences' },
+    { label: 'Cruising', href: '#cruising', journeyType: 'Cruising' },
+    { label: 'Visa Desk', href: '#visa-desk', journeyType: 'Visa Desk' },
   ]
 
   const heroSlides = [
@@ -89,11 +125,26 @@ export default function TravelClassHome() {
   ]
 
   useEffect(() => {
-    const timer = setInterval(() => {
-      setActiveHeroIndex(prev => (prev + 1) % 3)
-    }, 5000)
-    return () => clearInterval(timer)
+    const mediaQuery = window.matchMedia('(prefers-reduced-motion: reduce)')
+    const updateMotionPreference = () => setReducedMotion(mediaQuery.matches)
+
+    updateMotionPreference()
+    mediaQuery.addEventListener('change', updateMotionPreference)
+
+    return () => mediaQuery.removeEventListener('change', updateMotionPreference)
   }, [])
+
+  useEffect(() => {
+    if (reducedMotion || !isAutoPlaying) {
+      return undefined
+    }
+
+    const timer = window.setInterval(() => {
+      setActiveHeroIndex(prev => (prev + 1) % heroSlides.length)
+    }, 5000)
+
+    return () => window.clearInterval(timer)
+  }, [isAutoPlaying, reducedMotion])
 
   useEffect(() => {
     document.body.style.overflow = menuOpen ? 'hidden' : ''
@@ -139,7 +190,12 @@ export default function TravelClassHome() {
                 key={item.label}
                 href={item.href}
                 role="menuitem"
-                onClick={() => setServicesOpen(false)}
+                onClick={() => {
+                  setServicesOpen(false)
+                  if (item.journeyType) {
+                    openEnquiryContext({ journeyType: item.journeyType, step: 0 })
+                  }
+                }}
               >
                 {item.label}
               </a>
@@ -174,7 +230,12 @@ export default function TravelClassHome() {
               {serviceDropdownItems.map(item => (
                 <a
                   key={item.label}
-                  onClick={() => setMenuOpen(false)}
+                  onClick={() => {
+                    setMenuOpen(false)
+                    if (item.journeyType) {
+                      openEnquiryContext({ journeyType: item.journeyType, step: 0 })
+                    }
+                  }}
                   href={item.href}
                 >
                   {item.label}
@@ -287,6 +348,16 @@ export default function TravelClassHome() {
           font-size: 10px;
           color: rgba(255,255,255,0.3);
           transition: color 0.4s ease;
+          background: transparent;
+          border: 0;
+          padding: 0;
+          cursor: pointer;
+          appearance: none;
+        }
+        .premium-indicator:focus-visible {
+          outline: 2px solid rgba(215, 25, 45, 0.9);
+          outline-offset: 4px;
+          border-radius: 2px;
         }
         .premium-indicator.active {
           color: #D7192D;
@@ -300,6 +371,18 @@ export default function TravelClassHome() {
         .premium-indicator.active .premium-indicator-line {
           background: #D7192D;
         }
+        @media (max-width: 540px) {
+          .premium-indicators {
+            gap: 12px;
+            justify-content: center;
+            flex-wrap: wrap;
+          }
+          .premium-indicator {
+            min-width: 52px;
+            min-height: 32px;
+            justify-content: center;
+          }
+        }
       `}</style>
       <div className="hero-copy">
         <p className="hero-sub">We plan. You travel. Stress-free.</p>
@@ -308,8 +391,8 @@ export default function TravelClassHome() {
         <h1><span>Your journey.</span><br /><em>Our expertise.</em></h1>
         <p className="hero-body">From flights and accommodation to transfers, group travel, corporate travel and unforgettable experiences, Travel Class SA brings your journey together through one trusted travel partner.</p>
         <div className="hero-actions">
-          <a className="button button-red" href="#enquiry">Request a quote <ArrowUpRight size={16} /></a>
-          <a className="text-link" href="#contact">Speak to a consultant <ChevronRight size={16} /></a>
+          <a className="button button-red" href="#enquiry" onClick={() => openEnquiryContext()}>Request a quote <ArrowUpRight size={16} /></a>
+          <a className="text-link" href="#enquiry" onClick={() => openEnquiryContext()}>Speak to a consultant <ChevronRight size={16} /></a>
         </div>
       </div>
       <div className="premium-hero-visual">
@@ -332,12 +415,27 @@ export default function TravelClassHome() {
               </div>
             ))}
           </div>
-          <div className="premium-indicators" aria-label="Slideshow indicators">
-            {heroSlides.map((_, i) => (
-              <div key={i} className={`premium-indicator ${i === activeHeroIndex ? 'active' : ''}`} aria-hidden="true">
-                0{i + 1}
-                <div className="premium-indicator-line" />
-              </div>
+          <div className="premium-indicators" aria-label="Destination experience controls">
+            {heroSlides.map((slide, i) => (
+              <button
+                key={slide.src}
+                type="button"
+                className={`premium-indicator ${i === activeHeroIndex ? 'active' : ''}`}
+                onClick={() => {
+                  setActiveHeroIndex(i)
+                  setIsAutoPlaying(false)
+                }}
+                onFocus={() => setIsAutoPlaying(false)}
+                onMouseEnter={() => setIsAutoPlaying(false)}
+                onMouseLeave={() => setIsAutoPlaying(true)}
+                onBlur={() => setIsAutoPlaying(true)}
+                aria-label={`Show ${slide.alt}`}
+                aria-pressed={i === activeHeroIndex}
+                aria-current={i === activeHeroIndex ? 'true' : undefined}
+              >
+                {String(i + 1).padStart(2, '0')}
+                <div className="premium-indicator-line" aria-hidden="true" />
+              </button>
             ))}
           </div>
         </div>
@@ -368,7 +466,7 @@ export default function TravelClassHome() {
 
     <section className="journey-section"><div className="section-label light">The complete picture <span>02—03</span></div><div className="journey-heading"><p className="eyebrow red">More than a booking</p><h2>We manage<br /><em>the journey.</em></h2><p>Every moving part, thoughtfully connected. From the moment you leave home to the moment you return.</p></div><div className="timeline">{[['01', 'Flight', 'The right route, the right fare.'], ['02', 'Airport transfer', 'A smooth arrival, every time.'], ['03', 'Accommodation', 'A place that feels like yours.'], ['04', 'Tours & experiences', 'The moments you came for.'], ['05', 'Local transport', 'Every table, trail and turn connected.'], ['06', 'Return transfer', 'A considered journey back to the airport.'], ['07', 'Flight home', 'Home, with stories to tell.']].map((item, i) => <div className="timeline-item" key={item[1]}><div className="timeline-top"><span>{item[0]}</span><i className={i === 0 ? 'active-dot' : ''} /></div><h3>{item[1]}</h3><p>{item[2]}</p></div>)}</div><div className="journey-relationship"><span>Discover</span><i /> <span>Enquire</span><i /> <span>Consult</span><i /> <span>Quote</span><i /> <span>Confirm</span><i /> <span>Travel</span><i /> <span>Support</span><i /> <span>Return</span></div></section>
 
-    <section className="services-section" id="transport"><div className="section-label">What we do <span>03—03</span></div><div className="services-head"><div><p className="eyebrow red">One partner. Every detail.</p><h2>Everything<br /><em>in motion.</em></h2></div><p>One trusted team to plan, book and manage every part of your travel. No loose ends. No handovers. Just a better way to go.</p></div><div className="services-editorial"><div className="service-feature"><span>01 / 10</span><h3>Flights</h3><p>Domestic, international, multi-city and everything between. We find the route that makes sense for you.</p><a href="#enquiry">Request a flight quote <ArrowUpRight size={15} /></a></div><div className="service-list">{[['Accommodation', 'Plan a stay'], ['Airport Transfers', 'Arrange a transfer'], ['Coach & Bus Hire', 'Hire a coach'], ['Corporate Travel', 'Move your team'], ['Group Travel', 'Plan group travel'], ['Cruising', 'Plan a cruise'], ['Holiday Packages', 'Explore holidays'], ['Tours & Experiences', 'Discover experiences'], ['Visa Desk', 'Get visa guidance']].map((item, i) => <a key={item[0]} href="#enquiry"><span>0{i + 2}</span><span className="service-list-copy">{item[0]}<small>{item[1]}</small></span><ArrowUpRight size={15} /></a>)}</div>        <div className="service-feature" id="cruising" style={{ position: 'relative', overflow: 'hidden' }}>
+    <section className="services-section" id="transport"><div className="section-label">What we do <span>03—03</span></div><div className="services-head"><div><p className="eyebrow red">One partner. Every detail.</p><h2>Everything<br /><em>in motion.</em></h2></div><p>One trusted team to plan, book and manage every part of your travel. No loose ends. No handovers. Just a better way to go.</p></div><div className="services-editorial"><div className="service-feature" id="flights"><span>01 / 10</span><h3>Flights</h3><p>Domestic, international, multi-city and everything between. We find the route that makes sense for you.</p><a href="#enquiry" onClick={() => openEnquiryContext({ journeyType: 'Flights' })}>Request a flight quote <ArrowUpRight size={15} /></a></div><div className="service-list">{[['Accommodation', 'Plan a stay', 'Accommodation'], ['Airport Transfers', 'Arrange a transfer', 'Airport Transfer'], ['Coach & Bus Hire', 'Hire a coach', 'Coach & Bus Hire'], ['Corporate Travel', 'Move your team', 'Corporate Travel'], ['Group Travel', 'Plan group travel', 'Group Travel'], ['Cruising', 'Plan a cruise', 'Cruising'], ['Holiday Packages', 'Explore holidays', 'Holiday'], ['Tours & Experiences', 'Discover experiences', 'Tours & Experiences'], ['Visa Desk', 'Get visa guidance', 'Visa Desk']].map((item, i) => <a key={item[0]} href="#enquiry" onClick={() => openEnquiryContext({ journeyType: item[2] })}><span>0{i + 2}</span><span className="service-list-copy">{item[0]}<small>{item[1]}</small></span><ArrowUpRight size={15} /></a>)}</div>        <div className="service-feature" id="cruising" style={{ position: 'relative', overflow: 'hidden' }}>
           <Image
             src="/cruise.png"
             alt="Luxury ocean cruise liner docked under evening sky with calm water reflection"
@@ -388,22 +486,22 @@ export default function TravelClassHome() {
           <span style={{ zIndex: 2 }}>07 / 10</span>
           <h3 style={{ position: 'relative', zIndex: 2 }}>Cruising</h3>
           <p style={{ position: 'relative', zIndex: 2 }}>Cruise holiday packages and related cruise travel options, coordinated around your journey, dates and destination.</p>
-          <a href="#enquiry" style={{ position: 'relative', zIndex: 2 }}>Plan a cruise <ArrowUpRight size={15} /></a>
-        </div><div className="service-feature" id="visa-desk"><span>08 / 10</span><h3>Visa Desk</h3><p>Guidance on visa requirements and supporting documentation for your destination. We help you understand what&apos;s needed and support you in preparing your travel visa documentation. Visa requirements vary by destination and traveller circumstances.</p><a href="#enquiry">Get visa guidance <ArrowUpRight size={15} /></a></div></div></section>
+          <a href="#enquiry" style={{ position: 'relative', zIndex: 2 }} onClick={() => openEnquiryContext({ journeyType: 'Cruising' })}>Plan a cruise <ArrowUpRight size={15} /></a>
+        </div><div className="service-feature" id="visa-desk"><span>08 / 10</span><h3>Visa Desk</h3><p>Guidance on visa requirements and supporting documentation for your destination. We help you understand what&apos;s needed and support you in preparing your travel visa documentation. Visa requirements vary by destination and traveller circumstances.</p><a href="#enquiry" onClick={() => openEnquiryContext({ journeyType: 'Visa Desk' })}>Get visa guidance <ArrowUpRight size={15} /></a></div></div></section>
 
-    <section className="destination-section" id="holidays"><div className="destination-image"><Image src="/cape-town.png" alt="Cape Town with Table Mountain in the distance" fill sizes="(max-width: 800px) 100vw, 62vw" /><div className="image-caption">Featured destination / 01</div></div><div className="destination-copy"><p className="eyebrow">Go further</p><h2>Cape Town<br /><em>South Africa</em></h2><p>Where mountain meets ocean, and every day feels like the beginning of something. Let us take you there.</p><a className="text-link" href="#enquiry">Plan this journey <ChevronRight size={16} /></a><div className="destination-list">{destinations.map((d, i) => <span key={d}><b>{String(i + 2).padStart(2, '0')}</b>{d}</span>)}</div></div></section>
+    <section className="destination-section" id="holidays"><div className="destination-image"><Image src={destinationOptions[0].image} alt={destinationOptions[0].alt} fill sizes="(max-width: 800px) 100vw, 62vw" /><div className="image-caption">Featured destination / 01</div></div><div className="destination-copy"><p className="eyebrow">Go further</p><h2>{destinationOptions[0].name}<br /><em>{destinationOptions[0].country}</em></h2><p>Where mountain meets ocean, and every day feels like the beginning of something. Let us take you there.</p><a className="text-link" href="#enquiry" onClick={() => openDestinationContext(destinationOptions[0].name)}>Plan this journey <ChevronRight size={16} /></a><div className="destination-list">{destinationOptions.slice(1).map((destination, i) => <button key={destination.name} type="button" onClick={() => openDestinationContext(destination.name)} style={{ appearance: 'none', border: 0, background: 'transparent', padding: 0, width: '100%', textAlign: 'left', font: 'inherit', color: 'inherit', cursor: 'pointer' }}><span><b>{String(i + 2).padStart(2, '0')}</b>{destination.name}</span></button>)}</div></div></section>
 
-    <section className="dark-feature corporate" id="corporate"><div className="feature-marker">TC / 04</div><div><p className="eyebrow red">For business that moves</p><h2>Corporate travel.<br /><em>Without the complexity.</em></h2></div><div className="feature-detail"><p>Coordinate business flights, accommodation, transfers, shuttles, conferences and employee travel through one point of coordination.</p><div className="detail-list">{['Business flights', 'Accommodation', 'Transfers & shuttles', 'Car hire', 'Conferences', 'Group travel', 'Employee travel', 'Reporting & support', 'Emergency assistance'].map(x => <span key={x}>{x}</span>)}</div><a className="button button-outline" href="#enquiry">Talk to our corporate team <ArrowUpRight size={16} /></a></div></section>
+    <section className="dark-feature corporate" id="corporate"><div className="feature-marker">TC / 04</div><div><p className="eyebrow red">For business that moves</p><h2>Corporate travel.<br /><em>Without the complexity.</em></h2></div><div className="feature-detail"><p>Coordinate business flights, accommodation, transfers, shuttles, conferences and employee travel through one point of coordination.</p><div className="detail-list">{['Business flights', 'Accommodation', 'Transfers & shuttles', 'Car hire', 'Conferences', 'Group travel', 'Employee travel', 'Reporting & support', 'Emergency assistance'].map(x => <span key={x}>{x}</span>)}</div><a className="button button-outline" href="#enquiry" onClick={() => openEnquiryContext({ journeyType: 'Corporate Travel', step: 0 })}>Talk to our corporate team <ArrowUpRight size={16} /></a></div></section>
 
-    <section className="group-section" id="group-travel"><div className="group-copy"><p className="eyebrow red">For every kind of group</p><h2>One group.<br />One itinerary.<br /><em>One travel partner.</em></h2><p>Schools, universities, churches, sports teams, NGOs, conferences and weddings. We coordinate the whole picture so everyone can enjoy the moment.</p><a className="button button-red" href="#enquiry">Plan group travel <ArrowUpRight size={16} /></a></div><div className="group-steps">{['Flights', 'Accommodation', 'Transfers', 'Coach', 'Activities', 'Meals', 'Itinerary management'].map((x, i) => <div key={x}><span>0{i + 1}</span>{x}<ChevronRight size={15} /></div>)}</div></section>
+    <section className="group-section" id="group-travel"><div className="group-copy"><p className="eyebrow red">For every kind of group</p><h2>One group.<br />One itinerary.<br /><em>One travel partner.</em></h2><p>Schools, universities, churches, sports teams, NGOs, conferences and weddings. We coordinate the whole picture so everyone can enjoy the moment.</p><a className="button button-red" href="#enquiry" onClick={() => openEnquiryContext({ journeyType: 'Group Travel', step: 0 })}>Plan group travel <ArrowUpRight size={16} /></a></div><div className="group-steps">{['Flights', 'Accommodation', 'Transfers', 'Coach', 'Activities', 'Meals', 'Itinerary management'].map((x, i) => <div key={x}><span>0{i + 1}</span>{x}<ChevronRight size={15} /></div>)}</div></section>
 
-    <section className="premium-section"><div className="premium-stamp">TC<br /><span>SA</span></div><div><p className="eyebrow red">A new way to travel</p><h2>Plan today.<br /><em>Travel tomorrow.</em></h2><p>Travel Premium Plan — currently being developed. Travel Class SA is exploring a future structured travel funding solution through an appropriately licensed financial-services or insurance partner. Nothing here is an active financial product.</p><div className="contribution-list" aria-label="Potential illustrative contribution levels">{['R250', 'R500', 'R750', 'R1,000', 'R1,500+'].map(x => <span key={x}>{x}</span>)}</div><small className="premium-note">Potential illustrative contribution levels only.</small><a className="button button-dark" href="#contact">Join the waitlist <ArrowUpRight size={16} /></a></div></section>
+    <section className="premium-section" id="travel-premium"><div className="premium-stamp">TC<br /><span>SA</span></div><div><p className="eyebrow red">A new way to travel</p><h2>Plan today.<br /><em>Travel tomorrow.</em></h2><p>Travel Premium Plan — currently being developed. Travel Class SA is exploring a future structured travel funding solution through an appropriately licensed financial-services or insurance partner. Nothing here is an active financial product.</p><div className="contribution-list" aria-label="Potential illustrative contribution levels">{['R250', 'R500', 'R750', 'R1,000', 'R1,500+'].map(x => <span key={x}>{x}</span>)}</div><small className="premium-note">Potential illustrative contribution levels only.</small><a className="button button-dark" href="#contact">Join the waitlist <ArrowUpRight size={16} /></a></div></section>
 
     <section className="trust-section"><div><p className="eyebrow red">Why Travel Class SA</p><h2>A better way<br /><em>to go.</em></h2></div><div className="trust-copy"><p className="trust-lede">Travel is personal. Your travel partner should be too.</p><div className="trust-lines">{[['Trust', 'A travel partner coordinating your journey from planning through return.'], ['Expertise', 'Thoughtful travel management shaped around your journey.'], ['Convenience', 'One conversation. One itinerary. Every detail coordinated.'], ['Affordability', 'Travel options shaped around your destination, dates and budget.'], ['Flexibility', 'Journey details can be discussed and adjusted with your consultant.'], ['Support', 'Travel support throughout the journey.']].map(x => <div key={x[0]}><span>{x[0]}</span><p>{x[1]}</p></div>)}</div></div></section>
 
     <section className="about-section" id="about"><div><p className="eyebrow red">About Travel Class SA</p><h2>Travel made<br /><em>more personal.</em></h2></div><div className="about-copy"><p>Travel Class SA is a South African full-service Travel Management Company coordinating complete journeys for individuals, families, couples, leisure travellers, groups and organisations.</p><p>Our aim is to make travel simple, affordable, convenient, professional, personalised and memorable.</p><div className="about-principles"><span>Simple</span><span>Convenient</span><span>Personalised</span><span>Memorable</span></div></div></section>
 
-    <section className="final-cta" id="contact"><RouteMark dark /><p className="eyebrow">The next step is yours</p><h2>Ready to start<br /><em>your journey?</em></h2><p>Tell us where you want to go. We&apos;ll help coordinate how you get there.</p><div className="hero-actions"><a className="button button-red" href="#enquiry">Request a quote <ArrowUpRight size={16} /></a><a className="text-link" href="#enquiry">Speak to a consultant <ChevronRight size={16} /></a></div></section>
+    <section className="final-cta" id="contact"><RouteMark dark /><p className="eyebrow">The next step is yours</p><h2>Ready to start<br /><em>your journey?</em></h2><p>Tell us where you want to go. We&apos;ll help coordinate how you get there.</p><div className="hero-actions"><a className="button button-red" href="#enquiry" onClick={() => openEnquiryContext()}>Request a quote <ArrowUpRight size={16} /></a><a className="text-link" href="#enquiry" onClick={() => openEnquiryContext()}>Speak to a consultant <ChevronRight size={16} /></a></div></section>
 
     <footer className="site-footer"><Logo light /><p>Your journey.<br /><em>Our expertise.</em></p><div className="footer-links"><a href="#holidays">Holidays</a><a href="#corporate">Corporate</a><a href="#group-travel">Group travel</a><a href="#contact">Contact</a></div><div className="footer-bottom"><span>© 2026 Travel Class SA</span><span>South Africa</span><p>Designed by <a href="https://sihleb.co.za" target="_blank" rel="noopener noreferrer">SihleB</a></p></div></footer>
   </main>

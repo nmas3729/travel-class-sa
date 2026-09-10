@@ -23,7 +23,7 @@ function Logo({ light = false }: { light?: boolean }) {
         alt="Travel Class SA"
         width={140}
         height={104}
-        priority={false}
+        priority
         style={{
           width: light ? 'clamp(86px, 8vw, 124px)' : 'clamp(82px, 7vw, 112px)',
           height: 'auto',

@@ -8,8 +8,9 @@
 
 :root { --black: #050505; --red: #D7192D; --dark-red: #8E0B18; --white: #FFFFFF; --grey: #F4F4F4; --dark-grey: #171717; --line: rgba(5,5,5,.16); --font-body: Arial, Helvetica, sans-serif; --font-display: Georgia, 'Times New Roman', serif; }
 * { box-sizing: border-box; }
-html { scroll-behavior: smooth; background: var(--white); -webkit-text-size-adjust: 100%; text-rendering: optimizeLegibility; }
+html { scroll-behavior: smooth; scroll-padding-top: clamp(88px, 10vw, 120px); background: var(--white); -webkit-text-size-adjust: 100%; text-rendering: optimizeLegibility; }
 body { margin: 0; background: var(--white); color: var(--black); font-family: var(--font-body); min-height: 100svh; overflow-x: clip; }
+section[id], [id], .final-cta, .site-footer { scroll-margin-top: clamp(88px, 10vw, 120px); }
 a { color: inherit; text-decoration: none; }
 img, svg, video { display: block; max-width: 100%; }
 button, input, textarea, select { font: inherit; }
@@ -56,9 +57,13 @@ button, input, textarea, select { font: inherit; }
 @media (max-width: 900px) {
   .site-header { padding: 18px 5vw; }
   .desktop-nav, .header-cta { display: none; }
-  .menu-toggle { display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; border-radius: 12px; background: rgba(255,255,255,0.06); margin-left: auto; }
+  .menu-toggle { display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; min-width: 44px; min-height: 44px; border-radius: 12px; background: rgba(255,255,255,0.06); margin-left: auto; }
   .mobile-nav { display: flex; position: fixed; inset: 0; z-index: 9; flex-direction: column; gap: 22px; padding: calc(88px + env(safe-area-inset-top)) 6vw calc(28px + env(safe-area-inset-bottom)); background: rgba(5,5,5,0.98); color: var(--white); overflow-y: auto; }
-  .mobile-nav a { display: block; width: 100%; padding: 6px 0; text-transform: uppercase; letter-spacing: .14em; font-size: 12px; }
+  .mobile-nav a,
+  .mobile-nav-cta,
+  .mobile-services-toggle,
+  .mobile-services-list a { min-height: 44px; display: flex; align-items: center; }
+  .mobile-nav a { width: 100%; padding: 6px 0; text-transform: uppercase; letter-spacing: .14em; font-size: 12px; }
   .mobile-nav-cta { margin-top: auto; }
   .hero-section { grid-template-columns: 1fr; min-height: auto; }
   .hero-copy { padding: 120px 6vw 42px; }
@@ -99,18 +104,28 @@ button, input, textarea, select { font: inherit; }
   .mobile-nav a, .mobile-nav-cta { letter-spacing: .12em; }
   .hero-copy h1 { font-size: clamp(2.1rem, 11vw, 3.2rem); }
   .hero-actions { display: flex; flex-direction: column; align-items: stretch; }
-  .hero-actions a, .button, .text-link, .panel-next { width: 100%; justify-content: center; }
-  .choice { gap: 12px; padding: 14px 0; }
+  .hero-actions a, .button, .text-link, .panel-next { width: 100%; justify-content: center; min-height: 48px; }
+  .choice { gap: 12px; padding: 14px 0; min-height: 52px; }
   .section-label { padding: 22px 5vw; letter-spacing: .14em; }
   .enquiry-panel { padding: 22px 18px; }
   .journey-progress { margin-top: 36px; }
   .journey-progress span { width: 32px; }
   .service-feature { min-height: 250px; padding: 22px; }
   .service-feature h3 { font-size: 2.25rem; }
-  .service-list a { font-size: 1.3rem; }
+  .service-list a { font-size: 1.3rem; min-height: 52px; }
   .detail-list { grid-template-columns: 1fr; }
   .trust-lines div { grid-template-columns: 1fr; gap: 8px; }
   .about-principles { gap: 8px 14px; }
+  .destination-list button,
+  .footer-links a,
+  .service-feature a,
+  .service-list a,
+  .nav-dropdown-menu a,
+  .button,
+  .text-link,
+  .panel-next,
+  .mobile-nav a,
+  .mobile-services-list a { min-height: 44px; }
 }
 
 @media (max-width: 430px) {
@@ -118,10 +133,11 @@ button, input, textarea, select { font: inherit; }
   .hero-copy { padding-left: 5vw; padding-right: 5vw; }
   .hero-copy .hero-body { font-size: .92rem; line-height: 1.7; }
   .hero-copy .hero-actions { gap: 12px; }
-  .hero-actions a { font-size: .72rem; letter-spacing: .12em; }
-  .panel-next { padding: 14px 18px; }
+  .hero-actions a { font-size: .72rem; letter-spacing: .12em; min-height: 48px; }
+  .panel-next { padding: 14px 18px; min-height: 48px; }
   .journey-relationship { gap: 8px; }
   .site-footer > p { line-height: 1; }
+  button, input, textarea, select, a[href] { min-height: 44px; }
 }
 
 @media (prefers-reduced-motion: reduce) {
