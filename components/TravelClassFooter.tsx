@@ -51,6 +51,7 @@ export default function TravelClassFooter() {
         <nav className="travel-footer-explore" aria-label="Footer navigation">
           <h2>Explore</h2>
           {exploreLinks.map(link => <a key={link.label} href={link.href}>{link.label}</a>)}
+          <a href="/privacy-notice">Privacy Notice</a>
         </nav>
 
         <div className="travel-footer-contact">

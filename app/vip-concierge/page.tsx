@@ -493,6 +493,7 @@ export default function VipConciergePage() {
             </div>
           ) : (
             <form onSubmit={handleSubmit} style={{ background: '#0f0f0f', borderTop: '3px solid #D7192D', padding: 'clamp(32px,4vw,50px)', display: 'flex', flexDirection: 'column' }} aria-label="VIP Concierge enquiry form">
+              <div style={{ marginBottom: '24px', color: '#D7192D', fontSize: '10px', fontWeight: 700, letterSpacing: '.14em', textTransform: 'uppercase' }}>🔴 VIP TRAVEL ENQUIRY</div>
               {[
                 { id: 'vip-name', name: 'name', label: 'Full name', type: 'text', placeholder: 'Your full name', required: true, autoComplete: 'name' },
                 { id: 'vip-email', name: 'email', label: 'Email address', type: 'email', placeholder: 'you@example.com', required: true, autoComplete: 'email' },
@@ -537,9 +538,10 @@ export default function VipConciergePage() {
                 <p role="alert" style={{ margin: '0 0 16px', fontSize: '13px', lineHeight: 1.6, color: '#f7c7c7' }}>{errorMsg} <a href={buildWhatsAppUrl()} target="_blank" rel="noopener noreferrer" style={{ color: '#fff', textDecoration: 'underline' }}>Chat to a consultant on WhatsApp</a></p>
               )}
 
-              <button type="submit" disabled={isSubmitting} style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'space-between', gap: '18px', padding: '18px 24px', background: isSubmitting ? '#8a1a22' : '#D7192D', color: '#fff', border: 0, cursor: isSubmitting ? 'not-allowed' : 'pointer', textTransform: 'uppercase', letterSpacing: '.12em', fontSize: '10px', fontWeight: 700, opacity: isSubmitting ? 0.8 : 1 }}>
+              <button type="submit" disabled={isSubmitting} style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'space-between', gap: '18px', padding: '14px 24px', background: isSubmitting ? '#8a1a22' : '#D7192D', color: '#fff', border: 0, cursor: isSubmitting ? 'not-allowed' : 'pointer', textTransform: 'uppercase', letterSpacing: '.12em', fontSize: '10px', fontWeight: 700, opacity: isSubmitting ? 0.8 : 1, minHeight: '44px' }}>
                 {isSubmitting ? 'Sending enquiry…' : 'Send to Your Private Travel Concierge'} <ArrowUpRight size={14} />
               </button>
+              <p style={{ margin: '14px 0 0', color: 'rgba(240,237,232,0.5)', fontSize: '11px', lineHeight: 1.5 }}>Your details are used to respond to this enquiry. <a href="/privacy-notice" target="_blank" rel="noopener noreferrer" style={{ color: '#f0ede8', textDecoration: 'underline' }}>Privacy Notice</a></p>
             </form>
           )}
         </div>

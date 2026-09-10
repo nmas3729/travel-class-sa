@@ -672,6 +672,7 @@ export default function TravelClassHome() {
         <button type="submit" className="panel-next" disabled={isSubmitting} style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'space-between', gap: '18px', padding: '18px 24px', background: isSubmitting ? '#8a1a22' : '#D7192D', color: '#fff', border: 0, cursor: isSubmitting ? 'not-allowed' : 'pointer', textTransform: 'uppercase', letterSpacing: '.12em', fontSize: '10px', fontWeight: 700, opacity: isSubmitting ? 0.8 : 1 }}>
           {isSubmitting ? 'Sending enquiry…' : 'Send Your Enquiry'} <ArrowUpRight size={16} />
         </button>
+        <p style={{ margin: '0', color: 'rgba(240,237,232,0.5)', fontSize: '11px', lineHeight: 1.5 }}>Your details are used to respond to this enquiry. <a href="/privacy-notice" target="_blank" rel="noopener noreferrer" style={{ color: '#f0ede8', textDecoration: 'underline' }}>Privacy Notice</a></p>
       </form>
     )}
     {step < 2 && (

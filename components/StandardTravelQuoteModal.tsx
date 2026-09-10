@@ -431,6 +431,7 @@ export default function StandardTravelQuoteModal({ open, initialService = '', on
                       {loading ? 'Sending enquiry...' : 'Send my enquiry'} <ArrowRight size={14} />
                     </button>
                   </div>
+                  <p style={{ margin: '14px 0 0', color: 'rgba(240,237,232,0.5)', fontSize: '11px', lineHeight: 1.5 }}>Your details are used to respond to this enquiry. <a href="/privacy-notice" target="_blank" rel="noopener noreferrer" style={{ color: '#f0ede8', textDecoration: 'underline' }}>Privacy Notice</a></p>
                 </form>
               )}
             </>
