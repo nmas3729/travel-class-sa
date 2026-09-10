@@ -375,8 +375,8 @@ export default function TravelClassHome() {
           height: 520px;
           max-height: 60vh;
           min-height: 400px;
-          border-radius: 2px;
-          overflow: hidden;
+          border-radius: 18px; /* refined premium corner */
+          overflow: hidden; /* ensure image and overlays are clipped */
           border: 1px solid rgba(255, 255, 255, 0.08);
           box-shadow: 0 24px 60px rgba(0, 0, 0, 0.5);
         }
