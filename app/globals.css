@@ -151,3 +151,40 @@ button, input, textarea, select { font: inherit; }
 @media (max-width: 430px) { .reference-hero { min-height: 940px; }.reference-hero .hero-brand-lockup { font-size: 20px; }.reference-hero .hero-suitcase { font-size: 25px; }.reference-hero .hero-copy { padding-left: 8vw; padding-right: 8vw; }.reference-hero .hero-meta { bottom: 12px; }.reference-hero .hero-meta span:nth-child(n+5) { display: none; } }
 @media (max-width: 900px) { .site-header { padding: 22px 5vw; }.desktop-nav, .header-cta { display: none; }.menu-toggle { display: block; margin-left: auto; }.mobile-nav { display: flex; position: fixed; z-index: 9; inset: 0; padding: 100px 8vw 40px; background: var(--black); color: var(--white); flex-direction: column; gap: 22px; }.mobile-nav a { text-transform: uppercase; letter-spacing: .14em; font-size: 12px; }.mobile-nav-cta { margin-top: auto; align-self: flex-start; }.hero-section { grid-template-columns: 1fr; min-height: 820px; }.hero-copy { padding: 145px 8vw 60px; }.hero-copy h1 { font-size: clamp(60px, 16vw, 96px); }.hero-visual { min-height: 320px; }.hero-image-wrap { inset: 0 8vw 0 8vw; }.hero-side-note { display: none; }.hero-location { left: 12%; bottom: 18px; }.enquiry-grid, .services-editorial, .trust-section { grid-template-columns: 1fr; }.enquiry-grid { margin-top: 55px; gap: 50px; }.journey-heading { padding-top: 60px; }.journey-heading > p:last-child { margin-left: 0; }.timeline { grid-template-columns: 1fr; gap: 28px; }.timeline:before { top: 20px; bottom: 25px; left: calc(7vw + 4px); width: 1px; height: auto; right: auto; }.timeline-item { padding-left: 38px; }.timeline-top { position: absolute; left: 0; top: -2px; }.timeline-top span { position: absolute; left: 16px; white-space: nowrap; }.timeline-item h3 { margin-top: 0; padding-top: 0; font-size: 34px; }.timeline-item p { max-width: 280px; }.journey-relationship { margin: 55px 7vw 0; flex-wrap: wrap; justify-content: flex-start; row-gap: 15px; }.journey-relationship i { width: 14px; }.services-head { display: block; margin-top: 55px; }.services-head > p { margin-top: 35px; }.destination-section, .dark-feature, .group-section, .premium-section, .about-section { grid-template-columns: 1fr; }.about-section { padding: 80px 8vw; gap: 45px; }.destination-image { min-height: 420px; }.destination-copy { padding: 60px 8vw 80px; }.dark-feature { padding: 75px 8vw; gap: 40px; }.feature-detail { padding-top: 0; }.group-section { padding: 80px 8vw; gap: 50px; }.premium-section { padding: 80px 8vw; gap: 50px; }.premium-stamp { width: 150px; height: 150px; font-size: 28px; }.trust-section { padding: 80px 8vw; gap: 50px; }.final-cta { padding: 90px 8vw; }.footer-links { flex-wrap: wrap; }.footer-bottom { flex-direction: column; gap: 12px; } }
 @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } *, *:before, *:after { animation-duration: .01ms !important; transition-duration: .01ms !important; } }
+
+/* Accessibility: targeted color-contrast overrides for small/label text */
+/* Use slightly brighter reds on very dark backgrounds so small eyebrow text meets 4.5:1 */
+.journey-section .eyebrow.red {
+  color: #E72633; /* passes 4.5:1 against #050505 */
+}
+
+/* Dark-feature uses a slightly brighter red to pass on the dark-grey background */
+.dark-feature .eyebrow.red,
+.dark-feature .feature-marker {
+  color: #FF3038; /* passes 4.5:1 against #171717 */
+}
+
+/* Ensure body copy inside dark feature is readable */
+.dark-feature .feature-detail > p,
+.dark-feature .detail-list span {
+  color: #ddd;
+}
+
+/* Premium section: small eyebrow and note sit on a red background — use white for sufficient contrast */
+.premium-section .eyebrow {
+  color: var(--white);
+}
+
+.premium-section .premium-note {
+  color: var(--white);
+}
+
+/* Small meta text on light backgrounds should be darker for contrast */
+.service-list-copy small {
+  color: #333;
+}
+
+/* Journey heading modifier on dark background */
+.journey-section .journey-heading > p:last-child {
+  color: #ddd;
+}
