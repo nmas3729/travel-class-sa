@@ -35,7 +35,6 @@ const exploreLinks = [
   { label: 'Corporate', href: '/#corporate' },
   { label: 'Group Travel', href: '/#group-travel' },
   { label: 'VIP Concierge', href: '/vip-concierge' },
-  { label: 'Contact', href: '/#contact' },
 ]
 
 export default function TravelClassFooter() {
@@ -44,7 +43,7 @@ export default function TravelClassFooter() {
       <div className="travel-footer-main">
         <div className="travel-footer-brand">
           <a href="/" aria-label="Travel Class SA home" className="travel-footer-logo">
-            <Image src="/logo.png" alt="Travel Class SA" width={140} height={104} priority />
+            <Image src="/logo.png" alt="Travel Class SA" width={140} height={104} loading="lazy" />
           </a>
           <p>Your journey.<br /><em>Our expertise.</em></p>
         </div>
@@ -55,7 +54,6 @@ export default function TravelClassFooter() {
         </nav>
 
         <div className="travel-footer-contact">
-          <h2>Contact</h2>
           <span>Johannesburg, South Africa</span>
           <a href="tel:+27728336872">+27 72 833 6872</a>
           <a href="mailto:info@travelclasssa.com">info@travelclasssa.com</a>

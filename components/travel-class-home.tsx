@@ -117,7 +117,7 @@ const destinationOptions = [
   { name: 'Namibia' },
   { name: 'Mozambique' },
   { name: 'Botswana' },
-]
+] as const
 
 function RouteMark({ dark = false }: { dark?: boolean }) {
   return <span className={`route-mark ${dark ? 'route-mark-dark' : ''}`} aria-hidden="true"><span /><span /><span /></span>
@@ -210,6 +210,23 @@ export default function TravelClassHome() {
       return;
     }
 
+    if (!name.trim() || !email.trim() || !phone.trim() || !destination.trim()) {
+      setErrorMsg('Please complete your name, email, phone number and destination.');
+      return;
+    }
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim())) {
+      setErrorMsg('Please provide a valid email address.');
+      return;
+    }
+    if (!/^\+?[0-9()\s-]{7,25}$/.test(phone.trim())) {
+      setErrorMsg('Please provide a valid phone number.');
+      return;
+    }
+    if (name.trim().length > 120 || destination.trim().length > 160 || notes.trim().length > 5000) {
+      setErrorMsg('Please shorten the longer details and try again.');
+      return;
+    }
+
     setIsSubmitting(true);
     setErrorMsg('');
 
@@ -224,6 +241,7 @@ export default function TravelClassHome() {
       email,
       phone,
       notes,
+      website: (event.currentTarget.elements.namedItem('website') as HTMLInputElement | null)?.value || '',
     };
 
     try {
@@ -551,6 +569,7 @@ export default function TravelClassHome() {
                   alt={slide.alt} 
                   fill 
                   priority={i === 0} 
+                  loading={i === 0 ? 'eager' : 'lazy'}
                   sizes="(max-width: 900px) 90vw, 40vw" 
                   style={{ objectFit: 'cover' }} 
                 />
@@ -586,6 +605,7 @@ export default function TravelClassHome() {
 
     <section className="enquiry-section" id="enquiry"><div className="section-label">Start here <span>01—03</span></div><div className="enquiry-grid"><div><p className="eyebrow red">Your journey begins</p><h2>Where are<br /><em>you going?</em></h2><p className="section-intro">Tell us what you&apos;re planning. We&apos;ll help coordinate the journey.</p><div className="journey-progress"><span className="progress-active" /><span /><span /></div></div><div className="enquiry-panel"><p className="panel-kicker">Step {step + 1} of 3</p>{step === 0 && <><h3>What kind of journey are you planning?</h3><div className="choice-list">{enquiryTypes.map(type => <button key={type} className={selected === type ? 'choice selected' : 'choice'} onClick={() => setSelected(type)}>{type}<ChevronRight size={17} /></button>)}</div></>}{step === 1 && <><h3>Where will your journey take you?</h3><label>Destination<input value={destination} onChange={e => setDestination(e.target.value)} placeholder="e.g. Cape Town, Mauritius, Paris" /></label><label>Travel dates<input value={dates} onChange={e => setDates(e.target.value)} type="text" placeholder="When would you like to travel?" /></label></>}{step === 2 && (
       <form onSubmit={handleSubmit} noValidate style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
+        <input name="website" type="text" tabIndex={-1} autoComplete="off" aria-hidden="true" style={{ position: 'absolute', left: '-10000px', width: '1px', height: '1px', opacity: 0 }} />
         <h3 style={{ fontFamily: 'Georgia, "Times New Roman", serif', fontWeight: 400, fontSize: '28px', lineHeight: 1.2, margin: '0 0 8px', color: '#f0ede8' }}>Let’s make it personal.</h3>
 
         <div style={{ display: 'grid', gap: '14px' }}>
@@ -638,7 +658,7 @@ export default function TravelClassHome() {
         </div>
 
         {submitted && (
-          <p style={{ margin: '8px 0 0', color: '#f0ede8', fontSize: '14px' }}>Enquiry received. We&apos;ll be in touch shortly.</p>
+          <p role="status" style={{ margin: '8px 0 0', color: '#f0ede8', fontSize: '14px' }}>Thank you. Your enquiry has been received. A Travel Class SA consultant will review your request and get back to you shortly.</p>
         )}
 
         {isSubmitting && (
@@ -646,7 +666,7 @@ export default function TravelClassHome() {
         )}
 
         {errorMsg && (
-          <p style={{ margin: '0 0 16px', fontSize: '13px', lineHeight: 1.6, color: '#f7c7c7' }}>{errorMsg}</p>
+          <p role="alert" style={{ margin: '0 0 16px', fontSize: '13px', lineHeight: 1.6, color: '#f7c7c7' }}>{errorMsg} <a href={buildWhatsAppUrl()} target="_blank" rel="noopener noreferrer" style={{ color: '#fff', textDecoration: 'underline' }}>Chat to a consultant on WhatsApp</a></p>
         )}
 
         <button type="submit" className="panel-next" disabled={isSubmitting} style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'space-between', gap: '18px', padding: '18px 24px', background: isSubmitting ? '#8a1a22' : '#D7192D', color: '#fff', border: 0, cursor: isSubmitting ? 'not-allowed' : 'pointer', textTransform: 'uppercase', letterSpacing: '.12em', fontSize: '10px', fontWeight: 700, opacity: isSubmitting ? 0.8 : 1 }}>
@@ -667,6 +687,7 @@ export default function TravelClassHome() {
             src="/fight-card.png"
             alt="Commercial aircraft on approach with warm sky"
             fill
+            loading="lazy"
             sizes="(max-width: 800px) 100vw, 50vw"
             style={{ objectFit: 'cover', objectPosition: 'center 25%' }}
           />
@@ -688,6 +709,7 @@ export default function TravelClassHome() {
             src="/cruise.png"
             alt="Luxury ocean cruise liner docked under evening sky with calm water reflection"
             fill
+            loading="lazy"
             sizes="(max-width: 800px) 100vw, 50vw"
             style={{ objectFit: 'cover', objectPosition: 'center 25%' }}
           />
@@ -709,6 +731,7 @@ export default function TravelClassHome() {
             src="/visa-card.png"
             alt="Visa desk staff assisting customers in a bright office"
             fill
+            loading="lazy"
             sizes="(max-width: 800px) 100vw, 50vw"
             style={{ objectFit: 'cover', objectPosition: 'center 25%' }}
           />
@@ -727,7 +750,7 @@ export default function TravelClassHome() {
           <a href="#enquiry" style={{ position: 'relative', zIndex: 2 }} onClick={(event) => { event.preventDefault(); openQuoteModal('Visa Desk') }}>Get visa guidance <ArrowUpRight size={15} /></a>
         </div></div></section>
 
-    <section className="destination-section" id="holidays"><div className="destination-image"><Image src={destinationOptions[0].image} alt={destinationOptions[0].alt} fill sizes="(max-width: 800px) 100vw, 62vw" /><div className="image-caption">Featured destination / 01</div></div><div className="destination-copy"><p className="eyebrow">Go further</p><h2>{destinationOptions[0].name}<br /><em>{destinationOptions[0].country}</em></h2><p>Where mountain meets ocean, and every day feels like the beginning of something. Let us take you there.</p><a className="text-link" href="#enquiry" onClick={(event) => { event.preventDefault(); openQuoteModal('Holiday') }}>Plan this journey <ChevronRight size={16} /></a><div className="destination-list">{destinationOptions.slice(1).map((destination, i) => <button key={destination.name} type="button" onClick={() => openQuoteModal('Holiday')} style={{ appearance: 'none', border: 0, background: 'transparent', padding: 0, width: '100%', textAlign: 'left', font: 'inherit', color: 'inherit', cursor: 'pointer' }}><span><b>{String(i + 2).padStart(2, '0')}</b>{destination.name}</span></button>)}</div></div></section>
+    <section className="destination-section" id="holidays"><div className="destination-image"><Image src={destinationOptions[0].image} alt={destinationOptions[0].alt} fill loading="lazy" sizes="(max-width: 800px) 100vw, 62vw" /><div className="image-caption">Featured destination / 01</div></div><div className="destination-copy"><p className="eyebrow">Go further</p><h2>{destinationOptions[0].name}<br /><em>{destinationOptions[0].country}</em></h2><p>Where mountain meets ocean, and every day feels like the beginning of something. Let us take you there.</p><a className="text-link" href="#enquiry" onClick={(event) => { event.preventDefault(); openQuoteModal('Holiday') }}>Plan this journey <ChevronRight size={16} /></a><div className="destination-list">{destinationOptions.slice(1).map((destination, i) => <button key={destination.name} type="button" onClick={() => openQuoteModal('Holiday')} style={{ appearance: 'none', border: 0, background: 'transparent', padding: 0, width: '100%', textAlign: 'left', font: 'inherit', color: 'inherit', cursor: 'pointer' }}><span><b>{String(i + 2).padStart(2, '0')}</b>{destination.name}</span></button>)}</div></div></section>
 
     <section className="dark-feature corporate" id="corporate"><div className="feature-marker">TC / 04</div><div><p className="eyebrow red">For business that moves</p><h2>Corporate travel.<br /><em>Without the complexity.</em></h2></div><div className="feature-detail"><p>Coordinate business flights, accommodation, transfers, shuttles, conferences and employee travel through one point of coordination.</p><div className="detail-list">{['Business flights', 'Accommodation', 'Transfers & shuttles', 'Car hire', 'Conferences', 'Group travel', 'Employee travel', 'Reporting & support', 'Emergency assistance'].map(x => <span key={x}>{x}</span>)}</div><a className="button button-outline" href="#enquiry" onClick={(event) => { event.preventDefault(); openQuoteModal('Corporate Travel') }}>Talk to our corporate team <ArrowUpRight size={16} /></a></div></section>
 

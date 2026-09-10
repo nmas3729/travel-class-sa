@@ -160,10 +160,20 @@ export default function VipConciergePage() {
     }
 
     setErrorMsg('');
-    setIsSubmitting(true);
-
     const form = event.currentTarget as HTMLFormElement;
     const formData = new FormData(form);
+
+    const submittedPhone = formData.get('phone')?.toString().trim() || formData.get('vip-phone')?.toString().trim() || '';
+    if (submittedPhone && !/^\+?[0-9()\s-]{7,25}$/.test(submittedPhone)) {
+      setErrorMsg('Please provide a valid phone number.');
+      return;
+    }
+    if (!selectedServices.length) {
+      setErrorMsg('Please choose at least one VIP service.');
+      return;
+    }
+    setIsSubmitting(true);
+
     const payload: any = {};
     formData.forEach((value, key) => {
       payload[key] = value;
@@ -310,6 +320,7 @@ export default function VipConciergePage() {
               src="/private-charter.webp"
               alt="Private jet charter"
               fill
+              loading="lazy"
               sizes="(max-width: 900px) 100vw, 50vw"
               style={{ objectFit: 'cover', objectPosition: 'center' }}
             />
@@ -472,23 +483,25 @@ export default function VipConciergePage() {
             <div style={{ background: '#0f0f0f', border: '1px solid rgba(215,25,45,0.3)', padding: 'clamp(32px,4vw,50px)', display: 'flex', flexDirection: 'column', justifyContent: 'center', minHeight: '400px', textAlign: 'center', gap: '16px' }}>
               <span style={{ fontSize: '28px', color: '#D7192D' }}>✦</span>
               <h3 style={{ fontFamily: 'Georgia, "Times New Roman", serif', fontWeight: 400, fontSize: '28px', color: '#f0ede8', margin: 0 }}>Your enquiry has been received.</h3>
-              <p style={{ fontSize: '14px', color: 'rgba(240,237,232,0.5)', lineHeight: 1.7, margin: 0 }}>Enquiry received. Your private travel concierge will be in touch.</p>
+              <p role="status" style={{ fontSize: '14px', color: 'rgba(240,237,232,0.5)', lineHeight: 1.7, margin: 0 }}>A Travel Class SA consultant will review your request and get back to you shortly.</p>
             </div>
           ) : (
             <form onSubmit={handleSubmit} style={{ background: '#0f0f0f', borderTop: '3px solid #D7192D', padding: 'clamp(32px,4vw,50px)', display: 'flex', flexDirection: 'column' }} aria-label="VIP Concierge enquiry form">
               {[
-                { id: 'vip-name', label: 'Full name', type: 'text', placeholder: 'Your full name', required: true, autoComplete: 'name' },
-                { id: 'vip-email', label: 'Email address', type: 'email', placeholder: 'you@example.com', required: true, autoComplete: 'email' },
-                { id: 'vip-phone', label: 'Phone / WhatsApp', type: 'tel', placeholder: '+27 000 000 0000', required: false, autoComplete: 'tel' },
-                { id: 'vip-destination', label: 'Destination', type: 'text', placeholder: 'Where would you like to travel?', required: false, autoComplete: 'off' },
-                { id: 'vip-dates', label: 'Travel dates', type: 'text', placeholder: 'When would you like to travel?', required: false, autoComplete: 'off' },
-                { id: 'vip-travellers', label: 'Number of travellers', type: 'number', placeholder: '1', required: false, autoComplete: 'off' },
+                { id: 'vip-name', name: 'name', label: 'Full name', type: 'text', placeholder: 'Your full name', required: true, autoComplete: 'name' },
+                { id: 'vip-email', name: 'email', label: 'Email address', type: 'email', placeholder: 'you@example.com', required: true, autoComplete: 'email' },
+                { id: 'vip-phone', name: 'phone', label: 'Phone / WhatsApp', type: 'tel', placeholder: '+27 000 000 0000', required: false, autoComplete: 'tel' },
+                { id: 'vip-destination', name: 'destination', label: 'Destination', type: 'text', placeholder: 'Where would you like to travel?', required: false, autoComplete: 'off' },
+                { id: 'vip-dates', name: 'dates', label: 'Travel dates', type: 'text', placeholder: 'When would you like to travel?', required: false, autoComplete: 'off' },
+                { id: 'vip-travellers', name: 'travellers', label: 'Number of travellers', type: 'number', placeholder: '1', required: false, autoComplete: 'off' },
               ].map(field => (
                 <label key={field.id} htmlFor={field.id} style={{ display: 'grid', gap: '8px', fontSize: '10px', textTransform: 'uppercase', letterSpacing: '.1em', margin: '0 0 20px', color: 'rgba(240,237,232,0.6)' }}>
                   {field.label}{field.required && <span style={{ color: '#D7192D' }}> *</span>}
-                  <input id={field.id} type={field.type} placeholder={field.placeholder} required={field.required} autoComplete={field.autoComplete} style={{ border: 0, borderBottom: '1px solid rgba(255,255,255,0.15)', background: 'transparent', color: '#f0ede8', padding: '10px 0', outline: 0, fontFamily: 'Arial, Helvetica, sans-serif', fontSize: '14px' }} />
+                  <input id={field.id} name={field.name} type={field.type} placeholder={field.placeholder} required={field.required} autoComplete={field.autoComplete} style={{ border: 0, borderBottom: '1px solid rgba(255,255,255,0.15)', background: 'transparent', color: '#f0ede8', padding: '10px 0', outline: 0, fontFamily: 'Arial, Helvetica, sans-serif', fontSize: '14px' }} />
                 </label>
               ))}
+
+              <input name="website" type="text" tabIndex={-1} autoComplete="off" aria-hidden="true" style={{ position: 'absolute', left: '-10000px', width: '1px', height: '1px', opacity: 0 }} />
 
               <fieldset style={{ border: 0, padding: 0, margin: '0 0 24px' }}>
                 <legend style={{ fontSize: '10px', textTransform: 'uppercase', letterSpacing: '.1em', color: 'rgba(240,237,232,0.6)', marginBottom: '16px', display: 'block' }}>VIP services required</legend>
@@ -515,7 +528,7 @@ export default function VipConciergePage() {
               )}
 
               {errorMsg && (
-                <p style={{ margin: '0 0 16px', fontSize: '13px', lineHeight: 1.6, color: '#f7c7c7' }}>{errorMsg}</p>
+                <p role="alert" style={{ margin: '0 0 16px', fontSize: '13px', lineHeight: 1.6, color: '#f7c7c7' }}>{errorMsg} <a href={buildWhatsAppUrl()} target="_blank" rel="noopener noreferrer" style={{ color: '#fff', textDecoration: 'underline' }}>Chat to a consultant on WhatsApp</a></p>
               )}
 
               <button type="submit" disabled={isSubmitting} style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'space-between', gap: '18px', padding: '18px 24px', background: isSubmitting ? '#8a1a22' : '#D7192D', color: '#fff', border: 0, cursor: isSubmitting ? 'not-allowed' : 'pointer', textTransform: 'uppercase', letterSpacing: '.12em', fontSize: '10px', fontWeight: 700, opacity: isSubmitting ? 0.8 : 1 }}>

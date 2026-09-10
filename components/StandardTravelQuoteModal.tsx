@@ -2,6 +2,7 @@
 
 import { FormEvent, useEffect, useMemo, useRef, useState } from 'react'
 import { ArrowLeft, ArrowRight, X } from 'lucide-react'
+import { buildWhatsAppUrl } from '@/lib/utils'
 
 const services = [
   'Holiday',
@@ -165,7 +166,13 @@ export default function StandardTravelQuoteModal({ open, initialService = '', on
 
     if (!phone.trim()) {
       nextErrors.phone = 'Phone / WhatsApp number is required.'
+    } else if (!/^\+?[0-9()\s-]{7,25}$/.test(phone.trim())) {
+      nextErrors.phone = 'Please enter a valid phone number.'
     }
+
+    if (name.trim().length > 120) nextErrors.name = 'Please shorten your name.'
+    if (email.trim().length > 254) nextErrors.email = 'Please use a shorter email address.'
+    if (destination.trim().length > 160) nextErrors.destination = 'Please shorten your destination.'
 
     setErrors(nextErrors)
     return Object.keys(nextErrors).length === 0
@@ -194,6 +201,7 @@ export default function StandardTravelQuoteModal({ open, initialService = '', on
       email,
       phone,
       notes,
+      website: ((event.currentTarget as HTMLFormElement).elements.namedItem('website') as HTMLInputElement | null)?.value || '',
     }
 
     try {
@@ -396,6 +404,7 @@ export default function StandardTravelQuoteModal({ open, initialService = '', on
 
               {step === 3 && (
                 <form onSubmit={handleSubmit} noValidate>
+                  <input name="website" type="text" tabIndex={-1} autoComplete="off" aria-hidden="true" style={{ position: 'absolute', left: '-10000px', width: '1px', height: '1px', opacity: 0 }} />
                   <div style={{ display: 'grid', gap: '14px' }}>
                     <label style={{ display: 'grid', gap: '8px', color: 'rgba(240,237,232,0.7)', fontSize: '10px', letterSpacing: '.12em', textTransform: 'uppercase', width: '100%' }}>
                       Full name <span style={{ color: '#D7192D' }}>*</span>
@@ -414,7 +423,7 @@ export default function StandardTravelQuoteModal({ open, initialService = '', on
                     </label>
                   </div>
 
-                  {submitError && <div style={{ color: '#ffd1d1', marginTop: '14px', fontSize: '12px' }}>{submitError}</div>}
+                  {submitError && <div role="alert" style={{ color: '#ffd1d1', marginTop: '14px', fontSize: '12px' }}>{submitError} <a href={buildWhatsAppUrl()} target="_blank" rel="noopener noreferrer" style={{ color: '#fff', textDecoration: 'underline' }}>Chat to a consultant on WhatsApp</a></div>}
 
                   <div style={{ display: 'flex', justifyContent: isMobile ? 'stretch' : 'space-between', gap: '12px', marginTop: '16px', flexDirection: isMobile ? 'column' : 'row' }}>
                     <button type="button" onClick={() => setStep(2)} style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: '8px', padding: '14px 20px', color: '#f0ede8', background: 'transparent', border: '1px solid rgba(255,255,255,0.2)', cursor: 'pointer', fontSize: '10px', letterSpacing: '.12em', textTransform: 'uppercase', minHeight: '44px', width: isMobile ? '100%' : 'auto', boxSizing: 'border-box' }}><ArrowLeft size={14} /> Back</button>
@@ -429,7 +438,7 @@ export default function StandardTravelQuoteModal({ open, initialService = '', on
             <div style={{ display: 'grid', gap: '20px', justifyItems: 'center', textAlign: 'center', padding: '30px 10px' }}>
               <div style={{ color: '#D7192D', fontSize: '40px' }}>✦</div>
               <div style={{ fontFamily: 'Georgia, "Times New Roman", serif', fontSize: 'clamp(34px,4vw,42px)', color: '#f0ede8', lineHeight: 1.3 }}>YOUR JOURNEY IS NOW WITH US.</div>
-              <div style={{ color: 'rgba(240,237,232,0.68)', fontSize: '14px', lineHeight: 1.8 }}>Thank you for your enquiry.<br />A Travel Class SA consultant will review your requirements and get back to you shortly.</div>
+              <div role="status" style={{ color: 'rgba(240,237,232,0.68)', fontSize: '14px', lineHeight: 1.8 }}>Thank you. Your enquiry has been received.<br />A Travel Class SA consultant will review your request and get back to you shortly.</div>
               <div style={{ fontFamily: 'Georgia, "Times New Roman", serif', fontSize: '28px', color: '#f0ede8' }}>Your journey.<br /><span style={{ color: '#D7192D' }}>Our expertise.</span></div>
               <button type="button" onClick={closeAndReset} style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', padding: '14px 26px', background: '#D7192D', color: '#fff', border: '0', cursor: 'pointer', fontSize: '10px', letterSpacing: '.12em', textTransform: 'uppercase' }}>Close</button>
             </div>
