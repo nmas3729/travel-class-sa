@@ -74,7 +74,7 @@ export default function TravelClassFooter() {
 
       <div className="travel-footer-bottom">
         <span>© 2026 Travel Class SA · South Africa</span>
-        <span>Designed by <a href="https://sihleb.co.za" target="_blank" rel="noopener noreferrer">SihleB</a></span>
+        <span>Design &amp; hosted by <a href="https://sihleb.co.za" target="_blank" rel="noopener noreferrer">SihleB Digital Studio</a></span>
       </div>
     </footer>
   )
