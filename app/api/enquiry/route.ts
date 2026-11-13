@@ -1,9 +1,9 @@
 import { NextResponse } from 'next/server';
 import { Resend } from 'resend';
 
-const resendApiKey = process.env.RESEND_API_KEY;
-const fromAddress = process.env.RESEND_FROM;
-const recipientAddress = 'info@travelclasssa.com';
+const resendApiKey = process.env.RESEND_API_KEY?.trim();
+const fromAddress = process.env.RESEND_FROM_EMAIL?.trim();
+const recipientAddress = process.env.CONTACT_EMAIL?.trim();
 const maxBodyBytes = 50_000;
 const rateLimitWindowMs = 10 * 60 * 1000;
 const maxRequestsPerWindow = 5;
@@ -103,7 +103,16 @@ export async function POST(request: Request) {
       return errorResponse('Please submit your enquiry as JSON.', 415);
     }
 
-    if (!resendApiKey || !fromAddress) {
+    if (!resendApiKey || !fromAddress || !recipientAddress) {
+      const missingEmailVariables = [
+        !resendApiKey && 'RESEND_API_KEY',
+        !fromAddress && 'RESEND_FROM_EMAIL',
+        !recipientAddress && 'CONTACT_EMAIL',
+      ].filter((variable): variable is string => Boolean(variable));
+
+      console.error('[api/enquiry] Missing required email environment variables', {
+        missingVariables: missingEmailVariables,
+      });
       return errorResponse("We couldn't send your enquiry right now. Please try again or contact us directly.", 503);
     }
 
@@ -182,12 +191,19 @@ export async function POST(request: Request) {
     });
 
     if (error) {
+      console.error('[api/enquiry] Resend rejected the email request', {
+        errorName: error.name,
+        statusCode: error.statusCode,
+      });
       duplicateSubmissions.delete(duplicateKey);
       return errorResponse("We couldn't send your enquiry right now. Please try again or contact us directly.", 502);
     }
 
     return NextResponse.json({ success: true });
-  } catch {
+  } catch (error) {
+    console.error('[api/enquiry] Unexpected error', {
+      errorType: error instanceof Error ? error.constructor.name : typeof error,
+    });
     return errorResponse("We couldn't send your enquiry right now. Please try again or contact us directly.", 500);
   }
 }
